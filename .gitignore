@@ -43,4 +43,12 @@ lerna-debug.log*
 .idea/
 .vscode/
 *.sublime-project
-*.sublime-workspace 
+*.sublime-workspace
+
+# Конкретные временные файлы и данные
+temp/api_response.json
+temp/match_data.json
+temp/search_result.json
+temp/upcoming_matches_query.json
+temp/script_log.txt
+**/tsconfig.json 

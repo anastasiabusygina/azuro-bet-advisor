@@ -1,22 +1,40 @@
 {
-  "name": "azuro-matches-fetcher",
+  "name": "azuro-betting-tools",
   "version": "1.0.0",
-  "description": "Standalone tool for fetching Azuro sports matches",
+  "description": "Инструменты для работы с Azuro Protocol",
   "type": "module",
   "scripts": {
-    "fetch": "node --loader ts-node/esm scripts/ts/fetchAndFormatMatches.standalone.ts",
-    "fetch:football": "SPORT_NAME=Football CHAIN=polygon-mainnet node --loader ts-node/esm scripts/ts/fetchAndFormatMatches.standalone.ts",
-    "fetch:basketball": "SPORT_NAME=Basketball CHAIN=polygon-mainnet node --loader ts-node/esm scripts/ts/fetchAndFormatMatches.standalone.ts",
-    "fetch:all": "./scripts/utils/fetch-matches-standalone.sh"
+    "fetch": "ts-node scripts/ts/fetchAndFormatMatches.standalone.ts",
+    "fetch:football": "cross-env SPORT_NAME=Football CHAIN=polygon-mainnet ts-node scripts/ts/fetchAndFormatMatches.standalone.ts",
+    "fetch:basketball": "cross-env SPORT_NAME=Basketball CHAIN=polygon-mainnet ts-node scripts/ts/fetchAndFormatMatches.standalone.ts",
+    "fetch:all": "./scripts/utils/fetch-matches-standalone.sh",
+    "test": "jest --config jest.config.ts",
+    "lint": "eslint . --ext .ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "advisor": "ts-node scripts/ts/demo.ts"
+  },
+  "keywords": [
+    "azuro",
+    "blockchain",
+    "betting"
+  ],
+  "author": "Anastasia Dev",
+  "license": "MIT",
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.19",
+    "@types/node-fetch": "^2.6.4",
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "@azuro-org/dictionaries": "^3.0.26",
-    "node-fetch": "^2.6.7"
-  },
-  "devDependencies": {
-    "@types/node": "^20.10.5",
-    "@types/node-fetch": "^2.6.4",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "dotenv": "^16.4.4",
+    "node-fetch": "^2.7.0"
   }
 }

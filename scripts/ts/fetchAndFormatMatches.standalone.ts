@@ -1,5 +1,5 @@
-import path from 'path'
-import fs from 'fs/promises'
+import * as path from 'path'
+import * as fs from 'fs/promises'
 import { fileURLToPath } from 'url'
 // Use CommonJS style import for node-fetch version 2
 import fetch from 'node-fetch'
@@ -11,13 +11,13 @@ import * as AzuroDictionaries from '@azuro-org/dictionaries'
  *
  * How to run:
  * 1. To run without arguments:
- *    node --loader ts-node/esm scripts/fetchAndFormatMatches.standalone.ts
+ *    ts-node scripts/ts/fetchAndFormatMatches.standalone.ts
  *
  * 2. To run with the match time window argument:
- *    node --loader ts-node/esm scripts/fetchAndFormatMatches.standalone.ts --t=3600
+ *    ts-node scripts/ts/fetchAndFormatMatches.standalone.ts --t=3600
  * 
  * 3. To specify a sport:
- *    SPORT_NAME="Football" node --loader ts-node/esm scripts/fetchAndFormatMatches.standalone.ts
+ *    SPORT_NAME="Football" ts-node scripts/ts/fetchAndFormatMatches.standalone.ts
  * 
  * Features:
  * - Displays match time in both UTC and Moscow time (MSK, UTC+3)
@@ -76,8 +76,8 @@ interface State {
 }
 
 // Constants
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const DEFAULT_MATCH_TIME_WINDOW_SECONDS = 86400
 const DEFAULT_MIN_ODDS = 1.2
@@ -416,6 +416,15 @@ async function getMatches(
   })
 
   try {
+    // Проверка валидности параметров
+    if (isNaN(startDate) || isNaN(endDate)) {
+      throw new Error('Invalid date parameters: startDate and endDate must be numbers')
+    }
+
+    if (startDate >= endDate) {
+      throw new Error('Invalid date range: startDate must be less than endDate')
+    }
+
     const response = await fetch(GRAPH_URL, {
       method: 'POST',
       headers: {
@@ -428,14 +437,17 @@ async function getMatches(
     })
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`)
     }
 
-    const result = await response.json()
+    const result = await response.json() as { 
+      data?: any, 
+      errors?: Array<{ message: string }> 
+    }
 
     if (result.errors) {
       console.error('Azuro query error:', result.errors)
-      throw new Error(result.errors[0].message)
+      throw new Error(`GraphQL error: ${result.errors[0].message}`)
     }
 
     if (!result.data) {
@@ -443,11 +455,22 @@ async function getMatches(
       throw new Error('Empty result.data while fetching subgraph')
     }
 
+    if (!result.data.sports || !Array.isArray(result.data.sports)) {
+      console.error('Invalid response format, sports array missing')
+      throw new Error('Invalid API response format: sports array missing')
+    }
+    
     console.log('Azuro query successful')
     const games = flattenGames(result.data)
+    
+    if (!games || !Array.isArray(games)) {
+      console.error('Failed to flatten games data')
+      return []
+    }
+    
     return minOdds ? filterGamesByOdds(games, minOdds) : games
   } catch (error) {
-    console.error('Error fetching matches:', error)
+    console.error('Error fetching matches:', error instanceof Error ? error.message : String(error))
     throw error
   }
 }

@@ -15,8 +15,8 @@ echo "- Вид спорта: ${SPORT}"
 
 # Установка переменных окружения и запуск скрипта
 echo -e "\n[1] Загрузка матчей..."
-echo "CHAIN=$CHAIN SPORT_NAME=\"$SPORT\" node --loader ts-node/esm scripts/ts/fetchAndFormatMatches.standalone.ts --t=$TIME_WINDOW"
-CHAIN=$CHAIN SPORT_NAME="$SPORT" node --loader ts-node/esm scripts/ts/fetchAndFormatMatches.standalone.ts --t=$TIME_WINDOW | cat
+echo "npx cross-env CHAIN=$CHAIN SPORT_NAME=\"$SPORT\" ts-node scripts/ts/fetchAndFormatMatches.standalone.ts --t=$TIME_WINDOW"
+npx cross-env CHAIN=$CHAIN SPORT_NAME="$SPORT" ts-node scripts/ts/fetchAndFormatMatches.standalone.ts --t=$TIME_WINDOW | cat
 
 # Проверяем, что матчи загрузились
 echo -e "\n[2] Проверка загруженных матчей..."

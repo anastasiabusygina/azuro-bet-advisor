@@ -1,0 +1,182 @@
+{
+  "gameId": "1006000000000026759546",
+  "title": "Burkina Faso – Djibouti",
+  "status": "Scheduled",
+  "sport": "Football",
+  "league": "World Cup Qualification - Africa",
+  "startsAt": "21 Mar 2025 16:00:00 GMT",
+  "lastUpdated": "2023-03-21 15:00:00",
+  "conditions": [
+    {
+      "conditionId": "100610060000000000267595460000000000000735755783",
+      "betType": "Full Time Result & Total Goals",
+      "parameter": "1.5",
+      "outcomes": [
+        {
+          "title": "1 & Over (1.5)",
+          "coefficient": 1.421698639959,
+          "outcomeId": 9738,
+          "recommended": true
+        },
+        {
+          "title": "1 & Under (1.5)",
+          "coefficient": 2.553587697952,
+          "outcomeId": 9739,
+          "recommended": false
+        },
+        {
+          "title": "X & Over (1.5)",
+          "coefficient": 66.256134527681,
+          "outcomeId": 9740,
+          "recommended": false
+        },
+        {
+          "title": "X & Under (1.5)",
+          "coefficient": 10.760294195001,
+          "outcomeId": 9741,
+          "recommended": false
+        },
+        {
+          "title": "2 & Over (1.5)",
+          "coefficient": 58.07078620378,
+          "outcomeId": 9742,
+          "recommended": false
+        },
+        {
+          "title": "2 & Under (1.5)",
+          "coefficient": 33.599233198349,
+          "outcomeId": 9743,
+          "recommended": false
+        }
+      ]
+    },
+    {
+      "conditionId": "100610060000000000267595460000000000000735755791",
+      "betType": "Full Time Result & Total Goals",
+      "parameter": "2.5",
+      "outcomes": [
+        {
+          "title": "1 & Over (2.5)",
+          "coefficient": 1.149614994103,
+          "outcomeId": 16483,
+          "recommended": false
+        },
+        {
+          "title": "1 & Under (2.5)",
+          "coefficient": 5.637190147189,
+          "outcomeId": 16487,
+          "recommended": false
+        },
+        {
+          "title": "X & Over (2.5)",
+          "coefficient": 11.172534165779,
+          "outcomeId": 16485,
+          "recommended": false
+        },
+        {
+          "title": "X & Under (2.5)",
+          "coefficient": 14.580081907771,
+          "outcomeId": 16486,
+          "recommended": false
+        },
+        {
+          "title": "2 & Over (2.5)",
+          "coefficient": 52.069147762819,
+          "outcomeId": 16484,
+          "recommended": false
+        },
+        {
+          "title": "2 & Under (2.5)",
+          "coefficient": 39.288439328352,
+          "outcomeId": 16488,
+          "recommended": false
+        }
+      ]
+    },
+    {
+      "conditionId": "100610060000000000267595460000000000000735755815",
+      "betType": "Full Time Result & Total Goals",
+      "parameter": "3.5",
+      "outcomes": [
+        {
+          "title": "1 & Over (3.5)",
+          "coefficient": 2.056890146804,
+          "outcomeId": 16501,
+          "recommended": false
+        },
+        {
+          "title": "1 & Under (3.5)",
+          "coefficient": 1.656905604726,
+          "outcomeId": 16505,
+          "recommended": false
+        },
+        {
+          "title": "X & Over (3.5)",
+          "coefficient": 68.765201286059,
+          "outcomeId": 16503,
+          "recommended": false
+        },
+        {
+          "title": "X & Under (3.5)",
+          "coefficient": 11.062115334673,
+          "outcomeId": 16504,
+          "recommended": false
+        },
+        {
+          "title": "2 & Over (3.5)",
+          "coefficient": 68.765201286059,
+          "outcomeId": 16502,
+          "recommended": false
+        },
+        {
+          "title": "2 & Under (3.5)",
+          "coefficient": 24.50297074289,
+          "outcomeId": 16506,
+          "recommended": false
+        }
+      ]
+    },
+    {
+      "conditionId": "100610060000000000267595460000000000000735755835",
+      "betType": "Both Teams To Score",
+      "outcomes": [
+        {
+          "title": "Yes",
+          "coefficient": 3.665996399303,
+          "outcomeId": 1,
+          "recommended": false
+        },
+        {
+          "title": "No",
+          "coefficient": 1.25511210306,
+          "outcomeId": 2,
+          "recommended": false
+        }
+      ]
+    },
+    {
+      "conditionId": "100610060000000000267595460000000000000735755875",
+      "betType": "1X2 (Основной исход)",
+      "outcomes": [
+        {
+          "title": "1",
+          "coefficient": 1.07136077264,
+          "outcomeId": 29,
+          "recommended": false
+        },
+        {
+          "title": "X",
+          "coefficient": 14.18411865327,
+          "outcomeId": 30,
+          "recommended": false
+        },
+        {
+          "title": "2",
+          "coefficient": 30.887413379093,
+          "outcomeId": 31,
+          "recommended": false
+        }
+      ]
+    }
+  ]
+} 

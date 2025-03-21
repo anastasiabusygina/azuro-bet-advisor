@@ -1,0 +1,3 @@
+{
+  "error": "GraphQL server error (client error): control character (\\u0000-\\u001F) found while parsing a string at line 3 column 0"
+}

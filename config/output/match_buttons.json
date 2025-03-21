@@ -1,0 +1,216 @@
+{
+  "match": {
+    "title": "Burkina Faso – Djibouti",
+    "id": "1006000000000026759546",
+    "gameId": "1006000000000026759546",
+    "status": "Scheduled",
+    "sport": "Football",
+    "league": "World Cup Qualification - Africa",
+    "startsAt": "21 Mar 2025 16:00:00 GMT"
+  },
+  "recommendedBet": {
+    "conditionId": "100610060000000000267595460000000000000735755783",
+    "outcomeId": 9738,
+    "betType": "Full Time Result & Total Goals",
+    "parameter": "1.5",
+    "title": "1 & Over (1.5)",
+    "coefficient": 1.421698639959,
+    "americanOdds": "--237"
+  },
+  "buttons": {
+    "Full_Time_Result_n_Total_Goals_1.5": {
+      "name": "Full Time Result & Total Goals",
+      "parameter": "1.5",
+      "conditionId": "100610060000000000267595460000000000000735755783",
+      "outcomes": [
+        {
+          "title": "1 & Over (1.5)",
+          "coefficient": 1.421698639959,
+          "americanOdds": "--237",
+          "outcomeId": 9738,
+          "recommended": true
+        },
+        {
+          "title": "1 & Under (1.5)",
+          "coefficient": 2.553587697952,
+          "americanOdds": "+155",
+          "outcomeId": 9739,
+          "recommended": false
+        },
+        {
+          "title": "X & Over (1.5)",
+          "coefficient": 66.256134527681,
+          "americanOdds": "+6526",
+          "outcomeId": 9740,
+          "recommended": false
+        },
+        {
+          "title": "X & Under (1.5)",
+          "coefficient": 10.760294195001,
+          "americanOdds": "+976",
+          "outcomeId": 9741,
+          "recommended": false
+        },
+        {
+          "title": "2 & Over (1.5)",
+          "coefficient": 58.07078620378,
+          "americanOdds": "+5707",
+          "outcomeId": 9742,
+          "recommended": false
+        },
+        {
+          "title": "2 & Under (1.5)",
+          "coefficient": 33.599233198349,
+          "americanOdds": "+3260",
+          "outcomeId": 9743,
+          "recommended": false
+        }
+      ]
+    },
+    "Full_Time_Result_n_Total_Goals_2.5": {
+      "name": "Full Time Result & Total Goals",
+      "parameter": "2.5",
+      "conditionId": "100610060000000000267595460000000000000735755791",
+      "outcomes": [
+        {
+          "title": "1 & Over (2.5)",
+          "coefficient": 1.149614994103,
+          "americanOdds": "--668",
+          "outcomeId": 16483,
+          "recommended": false
+        },
+        {
+          "title": "1 & Under (2.5)",
+          "coefficient": 5.637190147189,
+          "americanOdds": "+464",
+          "outcomeId": 16487,
+          "recommended": false
+        },
+        {
+          "title": "X & Over (2.5)",
+          "coefficient": 11.172534165779,
+          "americanOdds": "+1017",
+          "outcomeId": 16485,
+          "recommended": false
+        },
+        {
+          "title": "X & Under (2.5)",
+          "coefficient": 14.580081907771,
+          "americanOdds": "+1358",
+          "outcomeId": 16486,
+          "recommended": false
+        },
+        {
+          "title": "2 & Over (2.5)",
+          "coefficient": 52.069147762819,
+          "americanOdds": "+5107",
+          "outcomeId": 16484,
+          "recommended": false
+        },
+        {
+          "title": "2 & Under (2.5)",
+          "coefficient": 39.288439328352,
+          "americanOdds": "+3829",
+          "outcomeId": 16488,
+          "recommended": false
+        }
+      ]
+    },
+    "Full_Time_Result_n_Total_Goals_3.5": {
+      "name": "Full Time Result & Total Goals",
+      "parameter": "3.5",
+      "conditionId": "100610060000000000267595460000000000000735755815",
+      "outcomes": [
+        {
+          "title": "1 & Over (3.5)",
+          "coefficient": 2.056890146804,
+          "americanOdds": "+106",
+          "outcomeId": 16501,
+          "recommended": false
+        },
+        {
+          "title": "1 & Under (3.5)",
+          "coefficient": 1.656905604726,
+          "americanOdds": "--152",
+          "outcomeId": 16505,
+          "recommended": false
+        },
+        {
+          "title": "X & Over (3.5)",
+          "coefficient": 68.765201286059,
+          "americanOdds": "+6777",
+          "outcomeId": 16503,
+          "recommended": false
+        },
+        {
+          "title": "X & Under (3.5)",
+          "coefficient": 11.062115334673,
+          "americanOdds": "+1006",
+          "outcomeId": 16504,
+          "recommended": false
+        },
+        {
+          "title": "2 & Over (3.5)",
+          "coefficient": 68.765201286059,
+          "americanOdds": "+6777",
+          "outcomeId": 16502,
+          "recommended": false
+        },
+        {
+          "title": "2 & Under (3.5)",
+          "coefficient": 24.50297074289,
+          "americanOdds": "+2350",
+          "outcomeId": 16506,
+          "recommended": false
+        }
+      ]
+    },
+    "Both_Teams_To_Score": {
+      "name": "Both Teams To Score",
+      "conditionId": "100610060000000000267595460000000000000735755835",
+      "outcomes": [
+        {
+          "title": "Yes",
+          "coefficient": 3.665996399303,
+          "americanOdds": "+267",
+          "outcomeId": 1,
+          "recommended": false
+        },
+        {
+          "title": "No",
+          "coefficient": 1.25511210306,
+          "americanOdds": "--392",
+          "outcomeId": 2,
+          "recommended": false
+        }
+      ]
+    },
+    "1X2_(Основной_исход)": {
+      "name": "1X2 (Основной исход)",
+      "conditionId": "100610060000000000267595460000000000000735755875",
+      "outcomes": [
+        {
+          "title": "1",
+          "coefficient": 1.07136077264,
+          "americanOdds": "--1401",
+          "outcomeId": 29,
+          "recommended": false
+        },
+        {
+          "title": "X",
+          "coefficient": 14.18411865327,
+          "americanOdds": "+1318",
+          "outcomeId": 30,
+          "recommended": false
+        },
+        {
+          "title": "2",
+          "coefficient": 30.887413379093,
+          "americanOdds": "+2989",
+          "outcomeId": 31,
+          "recommended": false
+        }
+      ]
+    }
+  }
+}

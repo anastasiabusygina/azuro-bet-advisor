@@ -1,0 +1,91 @@
+Nadya Надя Верстка, Фронтенд, [21.03.2025 16:55]
+данные игры:
+Game Information:
+Game ID: 1006000000000026759546
+Title: Burkina Faso – Djibouti
+League: World Cup Qualification - Africa (International Tournaments)
+Teams: Burkina Faso vs Djibouti
+Start Time: 3/21/2025, 7:00:00 PM
+
+Available Odds:
+Match: Burkina Faso – Djibouti
+Time: Fri, 21 Mar 2025 16:00:00 GMT
+Sport: Football
+League: World Cup Qualification - Africa, International Tournaments
+Teams: Burkina Faso (Order: 0) vs Djibouti (Order: 1)
+Conditions:
+  Full Time Result & Total Goals (ID: 100610060000000000267595460000000000000735755783)
+    Outcomes: 1 & Over (ID: 9738): Odds 1.421698639959, 1 & Under (ID: 9739): Odds 2.553587697952, X & Over (ID: 9740): Odds 66.256134527681, X & Under (ID: 9741): Odds 10.760294195001, 2 & Over (ID: 9742): Odds 58.07078620378, 2 & Under (ID: 9743): Odds 33.599233198349
+  Full Time Result & Total Goals (ID: 100610060000000000267595460000000000000735755791)
+    Outcomes: 1 & Over (ID: 16483): Odds 1.149614994103, 2 & Over (ID: 16484): Odds 52.069147762819, X & Over (ID: 16485): Odds 11.172534165779, X & Under (ID: 16486): Odds 14.580081907771, 1 & Under (ID: 16487): Odds 5.637190147189, 2 & Under (ID: 16488): Odds 39.288439328352
+  Full Time Result & Total Goals (ID: 100610060000000000267595460000000000000735755815)
+    Outcomes: 1 & Over (ID: 16501): Odds 2.056890146804, 2 & Over (ID: 16502): Odds 68.765201286059, X & Over (ID: 16503): Odds 68.765201286059, X & Under (ID: 16504): Odds 11.062115334673, 1 & Under (ID: 16505): Odds 1.656905604726, 2 & Under (ID: 16506): Odds 24.50297074289
+  Both Teams To Score & Full Time Result (ID: 100610060000000000267595460000000000000735755818)
+    Outcomes: Yes & 1 (ID: 9726): Odds 3.789575568761, Yes & X (ID: 9727): Odds 14.185441720046, Yes & 2 (ID: 9728): Odds 67.071352396157, No & 1 (ID: 9729): Odds 1.27897662707, No & X (ID: 9730): Odds 16.829524305998, No & 2 (ID: 9731): Odds 16.829524305998
+  Whole game - Who First (3 way) Goal (ID: 100610060000000000267595460000000000000735755827)
+    Outcomes: 1 (ID: 16944): Odds 1.041676777211, 2 (ID: 16945): Odds 5.101588531093, Neither (ID: 16946): Odds 10.639211164672
+  Both Teams To Score (ID: 100610060000000000267595460000000000000735755835)
+    Outcomes: Yes (ID: 1): Odds 3.665996399303, No (ID: 2): Odds 1.25511210306
+  Total Goals (ID: 100610060000000000267595460000000000000735755837)
+    Outcomes: Over (ID: 25): Odds 2.112705292155, Under (ID: 26): Odds 1.677312194649
+  1st Half - Team 1 - Total Goals (ID: 100610060000000000267595460000000000000735755840)
+    Outcomes: Under (ID: 16807): Odds 2.345527131697, Over (ID: 16808): Odds 1.527329220642
+  1st Half - Both Teams To Score (ID: 100610060000000000267595460000000000000735755841)
+    Outcomes: Yes (ID: 110): Odds 9.138272266278, No (ID: 111): Odds 1.022990017893
+  1st Half - Handicap Goal (ID: 100610060000000000267595460000000000000735755854)
+    Outcomes: Team 1 (ID: 163): Odds 1.612311502603, Team 2 (ID: 164): Odds 2.22572811656
+  1st Half - Double Chance (ID: 100610060000000000267595460000000000000735755859)
+    Outcomes: 1X (ID: 6266): Odds 1.017640407492, 2X (ID: 6267): Odds 1.791403820594, 12 (ID: 6268): Odds 1.113415163759
+  1st Half - Winner (ID: 100610060000000000267595460000000000000735755869)
+    Outcomes: 1 (ID: 105): Odds 1.30914020909, 2 (ID: 106): Odds 26.171518283607, X (ID: 107): Odds 3.368914682185
+  Half with most Goals (ID: 100610060000000000267595460000000000000735755870)
+    Outcomes: 2 (ID: 16435): Odds 1.76955569261, 1 (ID: 16436): Odds 2.552915945962, Neither (ID: 16437): Odds 3.410903504402
+  Full Time Result (ID: 100610060000000000267595460000000000000735755875)
+    Outcomes: 1 (ID: 29): Odds 1.07136077264, X (ID: 30): Odds 14.18411865327, 2 (ID: 31): Odds 30.887413379093
+  2nd Half - Total Goal (ID: 100610060000000000267595460000000000000735755885)
+    Outcomes: Over (ID: 16239): Odds 1.727863404943, Under (ID: 16240): Odds 1.967701870053
+  2nd Half - Handicap Goal (ID: 100610060000000000267595460000000000000735755893)
+    Outcomes: Team 2 (ID: 16756): Odds 1.678455539624, Team 1 (ID: 16757): Odds 2.110894123418
+
+Nadya Надя Верстка, Фронтенд, [21.03.2025 16:55]
+Team 2 - Total Goals (ID: 100610060000000000267595460000000000000735755899)
+    Outcomes: Over (ID: 53): Odds 3.409067295785, Under (ID: 54): Odds 1.269445177918
+  Handicap (ID: 100610060000000000267595460000000000000735755912)
+    Outcomes: Team 1 (ID: 181): Odds 2.28203189415, Team 2 (ID: 182): Odds 1.58400096566
+  2nd Half - Handicap Goal (ID: 100610060000000000267595460000000000000735755913)
+    Outcomes: Team 1 (ID: 16749): Odds 1.440723644845, Team 2 (ID: 16750): Odds 2.663661511103
+  Handicap (ID: 100610060000000000267595460000000000000735755919)
+    Outcomes: Team 1 (ID: 7): Odds 1.802334891596, Team 2 (ID: 8): Odds 1.942944000102
+  Whole game - Both Teams To Score & Total Goal (ID: 100610060000000000267595460000000000000735755921)
+    Outcomes: No & Under (ID: 16479): Odds 2.278918953818, Yes & Under (ID: 16480): Odds 31.143839476909, No & Over (ID: 16481): Odds 2.038649887402, Yes & Over (ID: 16482): Odds 3.465415822846
+  2nd Half - Full time result Goal (ID: 100610060000000000267595460000000000000735755922)
+    Outcomes: 1 (ID: 16243): Odds 1.261312213779, 2 (ID: 16244): Odds 21.327470012608, X (ID: 16245): Odds 3.858201864154
+  Total Goals (ID: 100610060000000000267595460000000000000735755948)
+    Outcomes: Over (ID: 126): Odds 1.709150941464, Under (ID: 127): Odds 2.064269439922
+  Team 1 - Total Goals (ID: 100610060000000000267595460000000000000735755950)
+    Outcomes: Over (ID: 128): Odds 1.57991172023, Under (ID: 129): Odds 2.231473794398
+  Double Chance (ID: 100610060000000000267595460000000000000735755954)
+    Outcomes: 1X (ID: 38): Odds 1.000116457893, 12 (ID: 39): Odds 1.000384691438, 2X (ID: 40): Odds 2.275182681469
+  1st Half - Total Goal (ID: 100610060000000000267595460000000000000735761371)
+    Outcomes: Over (ID: 153): Odds 2.158691386729, Under (ID: 154): Odds 1.603301756359
+  1st Half - Handicap Goal (ID: 100610060000000000267595460000000000000735761375)
+    Outcomes: Team 1 (ID: 169): Odds 2.536860049097, Team 2 (ID: 170): Odds 1.480756166763
+  Total Goals Odd/Even (ID: 100610060000000000267595460000000000000735811075)
+    Outcomes: Yes (ID: 173): Odds 1.873827828364, No (ID: 174): Odds 1.826770557857
+  1st Half: Total Goals Odd/Even (ID: 100610060000000000267595460000000000000736257209)
+    Outcomes: Yes (ID: 175): Odds 1.763807000573, No (ID: 176): Odds 1.945049903625
+  2nd Half - Handicap Goal (ID: 100610060000000000267595460000000000000785420104)
+    Outcomes: Team 2 (ID: 16751): Odds 10.824886792172, Team 1 (ID: 16752): Odds 1.023395855294
+  1st Half - Team 2 - Total Goals (ID: 100610060000000000267595460000000000000785420195)
+    Outcomes: Over (ID: 101): Odds 6.335675447606, Under (ID: 102): Odds 1.083136448654
+
+	
+
+  Реекомандованная ставка:
+  {
+  "gameId": "1006000000000026759546",
+  "conditionId": "100610060000000000267595460000000000000735755783",
+  "outcomeId": "9738",
+  "confidence": 87,
+  "reasoning": "Burkina Faso's overwhelming odds (1.42) align with their historical dominance in World Cup qualifiers. The implied probability (70.3%) reflects their strong form and superior squad quality compared to Djibouti (ranked 186th in FIFA). Combined with the expectation of over 2.5 goals (odds 2.11) in a home game, this condition offers value. No critical player absences or schedule fatigue reported, and Djibouti's weak defensive record (avg 2+ goals conceded in qualifiers) supports this outcome."
+}

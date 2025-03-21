@@ -1,0 +1,22 @@
+{
+  "name": "azuro-matches-fetcher",
+  "version": "1.0.0",
+  "description": "Standalone tool for fetching Azuro sports matches",
+  "type": "module",
+  "scripts": {
+    "fetch": "node --loader ts-node/esm scripts/ts/fetchAndFormatMatches.standalone.ts",
+    "fetch:football": "SPORT_NAME=Football CHAIN=polygon-mainnet node --loader ts-node/esm scripts/ts/fetchAndFormatMatches.standalone.ts",
+    "fetch:basketball": "SPORT_NAME=Basketball CHAIN=polygon-mainnet node --loader ts-node/esm scripts/ts/fetchAndFormatMatches.standalone.ts",
+    "fetch:all": "./scripts/utils/fetch-matches-standalone.sh"
+  },
+  "dependencies": {
+    "@azuro-org/dictionaries": "^3.0.26",
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/node-fetch": "^2.6.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

@@ -546,6 +546,12 @@ if [ "$USE_LOCAL" = false ] && [ "$USE_API" = true ]; then
       -d "$SEARCH_QUERY" \
       $GRAPH_URL)
 
+    # Проверяем, получен ли ответ от API
+    if [ -z "$SEARCH_RESULT" ]; then
+      echo "Ошибка: Не удалось получить ответ от API."
+      exit 1
+    fi
+
     # Сохраняем результат поиска в файл, если не тихий режим
     if [ "$QUIET_MODE" = false ]; then
       echo $SEARCH_RESULT | jq . > "$SEARCH_RESULT_FILE"
@@ -555,43 +561,37 @@ if [ "$USE_LOCAL" = false ] && [ "$USE_API" = true ]; then
     # Проверяем, есть ли ошибки в ответе
     if [[ $(echo $SEARCH_RESULT | jq 'has("errors")') == "true" ]]; then
       if [ "$QUIET_MODE" = false ]; then
-        echo "Ошибка при выполнении запроса поиска по gameId."
+        echo "Ошибка при выполнении запроса поиска по gameId:"
+        echo $(echo $SEARCH_RESULT | jq -r '.errors[0].message')
+      fi
+      exit 1
+    fi
+
+    # Проверяем количество найденных игр
+    GAME_COUNT=$(echo $SEARCH_RESULT | jq '.data.games | length')
+    
+    if [ "$GAME_COUNT" -eq "0" ]; then
+      if [ "$QUIET_MODE" = false ]; then
+        echo "Матч с gameId $GAME_ID не найден."
       fi
       
       if [ -f "$MATCH_FILE" ]; then
         echo "Переходим к использованию локальных данных."
         USE_LOCAL=true
       else
-        echo "Ошибка: не удалось получить данные о матче и локальные данные отсутствуют."
+        echo "Ошибка: матч не найден и локальные данные отсутствуют."
         exit 1
       fi
     else
-      # Проверяем количество найденных игр
-      GAME_COUNT=$(echo $SEARCH_RESULT | jq '.data.games | length')
+      if [ "$QUIET_MODE" = false ]; then
+        echo "Матч найден по gameId."
+      fi
       
-      if [ "$GAME_COUNT" -eq "0" ]; then
-        if [ "$QUIET_MODE" = false ]; then
-          echo "Матч с gameId $GAME_ID не найден."
-        fi
-        
-        if [ -f "$MATCH_FILE" ]; then
-          echo "Переходим к использованию локальных данных."
-          USE_LOCAL=true
-        else
-          echo "Ошибка: матч не найден и локальные данные отсутствуют."
-          exit 1
-        fi
-      else
-        if [ "$QUIET_MODE" = false ]; then
-          echo "Матч найден по gameId."
-        fi
-        
-        USE_LOCAL=false
-        GAME_ID=$(echo $SEARCH_RESULT | jq -r '.data.games[0].id')
-        
-        if [ "$QUIET_MODE" = false ]; then
-          echo "Используем ID: $GAME_ID"
-        fi
+      USE_LOCAL=false
+      GAME_ID=$(echo $SEARCH_RESULT | jq -r '.data.games[0].id')
+      
+      if [ "$QUIET_MODE" = false ]; then
+        echo "Используем ID: $GAME_ID"
       fi
     fi
 fi
@@ -764,6 +764,17 @@ else
     -d "$DETAILED_QUERY" \
     $GRAPH_URL)
   
+  # Проверяем, получен ли ответ от API
+  if [ -z "$FULL_RESULT" ]; then
+    echo "Ошибка: Не удалось получить ответ от API."
+    if [ -f "$MATCH_FILE" ]; then
+      echo "Переходим к использованию локальных данных."
+      USE_LOCAL=true
+    else
+      exit 1
+    fi
+  fi
+  
   # Сохраняем полный результат в файл, если не тихий режим
   if [ "$QUIET_MODE" = false ]; then
     echo $FULL_RESULT | jq . > "$MATCH_DATA_FILE"
@@ -771,22 +782,24 @@ else
   fi
   
   # Проверяем успешность запроса
-  if [[ $(echo $FULL_RESULT | jq 'has("errors")') == "true" || $(echo $FULL_RESULT | jq -r '.data.game') == "null" ]]; then
-    echo "Не удалось получить информацию о матче."
+  if [[ $(echo $FULL_RESULT | jq 'has("errors")') == "true" ]]; then
+    echo "Ошибка при выполнении запроса к API:"
+    echo $(echo $FULL_RESULT | jq -r '.errors[0].message')
     
     if [ -f "$MATCH_FILE" ]; then
       echo "Переходим к использованию локальных данных."
       USE_LOCAL=true
-      
-      # Рекурсивно запускаем скрипт в режиме локальных данных
-      if [ "$QUIET_MODE" = true ]; then
-        $0 --local-only --quiet "$GAME_ID"
-      else
-        $0 --local-only "$GAME_ID"
-      fi
-      exit $?
     else
-      echo "Ошибка: не удалось получить данные о матче и локальные данные отсутствуют."
+      exit 1
+    fi
+  elif [[ $(echo $FULL_RESULT | jq -r '.data.game') == "null" ]]; then
+    echo "Матч с ID $GAME_ID не найден."
+    
+    if [ -f "$MATCH_FILE" ]; then
+      echo "Переходим к использованию локальных данных."
+      USE_LOCAL=true
+    else
+      echo "Ошибка: матч не найден и локальные данные отсутствуют."
       exit 1
     fi
   fi

@@ -1,4 +1,9 @@
 import type { Config } from '@jest/types';
+import { pathsToModuleNameMapper } from 'ts-jest';
+import { readFileSync } from 'fs';
+
+// Чтение конфигурации путей из tsconfig.json
+const tsConfig = JSON.parse(readFileSync('./tsconfig.json', 'utf-8'));
 
 /**
  * Jest configuration
@@ -22,6 +27,7 @@ const config: Config.InitialOptions = {
     '/azuro/queries/',
     '/temp_storage/',
     '/config/',
+    '/dist/'
   ],
   
   // Файлы, которые следует исключить из покрытия
@@ -40,8 +46,15 @@ const config: Config.InitialOptions = {
   transform: {
     '^.+\\.ts$': ['ts-jest', {
       // Настройки для ts-jest
-      isolatedModules: true
+      isolatedModules: true,
+      tsconfig: 'tsconfig.json'
     }]
+  },
+  
+  // Маппинг модулей для поддержки алиасов из tsconfig
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths || {}, { prefix: '<rootDir>/' }),
+    'node-fetch': '<rootDir>/node_modules/node-fetch/lib/index.js'
   },
   
   // Настройка окружения
@@ -49,11 +62,6 @@ const config: Config.InitialOptions = {
   
   // Файл с глобальной настройкой
   setupFilesAfterEnv: ['./test.setup.ts'],
-  
-  // Переопределяем модули, которые могут вызывать проблемы при тестировании
-  moduleNameMapper: {
-    'node-fetch': '<rootDir>/node_modules/node-fetch/lib/index.js'
-  }
 };
 
 export default config; 

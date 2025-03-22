@@ -99,4 +99,7 @@ temp/script_log.txt
 
 # AST тесты
 ast_tests/
-tests/ast/ 
+tests/ast/
+
+# Папка с задачами
+tasks/ 

@@ -1,10 +1,7 @@
-// Импортируем модуль загрузки переменных среды
-import './env';
-
 import { Hex } from 'viem'
-import { logEnv } from './output'
-import { getChainConfig } from './chainsConfig'
-import { schema, type Schema } from './schema'
+import { logEnv } from './utils/output'
+import { getChainConfig } from './utils/chainsConfig'
+import { schema, type Schema } from './utils/schema'
 
 let env: Schema;
 

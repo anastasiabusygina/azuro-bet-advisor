@@ -50,7 +50,7 @@
 │       └── fetch-matches-standalone.sh # Скрипт для запуска обновления матчей
 ├── temp_storage/          # Временное хранилище для неиспользуемых файлов
 ├── .env                   # Переменные окружения
-├── azuro-mapper.js        # JS-обертка для библиотеки @azuro-org/dictionaries
+├── azuro-mapper.ts        # TypeScript-обертка для библиотеки @azuro-org/dictionaries
 ├── get_match_buttons.sh   # Символическая ссылка на scripts/bash/get_match_buttons.sh
 ├── show_upcoming_matches.sh # Символическая ссылка на scripts/bash/show_upcoming_matches.sh
 ├── package.json           # Зависимости проекта
@@ -230,7 +230,7 @@ Handicap: Greenock Morton (-1)
 
 ## Интеграция с библиотекой Azuro
 
-Проект использует официальную библиотеку `@azuro-org/dictionaries` через JS-обертку (`azuro-mapper.js`) для получения точных названий рынков и исходов ставок. Это обеспечивает корректное отображение информации о ставках в соответствии с тем, как они представлены в официальном интерфейсе Azuro.
+Проект использует официальную библиотеку `@azuro-org/dictionaries` через TypeScript-обертку (`azuro-mapper.ts`) для получения точных названий рынков и исходов ставок. Это обеспечивает корректное отображение информации о ставках в соответствии с тем, как они представлены в официальном интерфейсе Azuro.
 
 Функции, доступные через JavaScript API:
 - `get_market_name` - получение названия рынка (типа ставки) по ID исхода
@@ -254,3 +254,8 @@ MAINNET_GRAPH_URL=https://thegraph.azuro.org/subgraphs/name/azuro-protocol/azuro
 - npm
 - bash (для скриптов *.sh)
 - jq (для обработки JSON в bash скриптах) 
+
+## Документация
+
+- [Руководство пользователя](./README.md)
+- [Техническая документация](./docs/technical-guide.md) - информация для разработчиков 

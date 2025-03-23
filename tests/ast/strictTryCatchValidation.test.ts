@@ -119,4 +119,23 @@ function validateTryStatement(node: any, file: string) {
   if (!hasHandlingOrLogging) {
     throw new Error(`${file}:${catchClause.loc?.start.line} - В catch-блоке отсутствует логирование или обработка ошибки.`);
   }
+  
+  // Дополнительная проверка: после логирования не должно быть повторного выбрасывания ошибки
+  // Ищем индекс выражения с логированием
+  const loggingIndex = statements.findIndex(
+    (stmt) =>
+      stmt.type === 'ExpressionStatement' &&
+      stmt.expression.type === 'CallExpression'
+  );
+  
+  // Проверяем, есть ли после логирования оператор throw
+  if (loggingIndex !== -1 && loggingIndex < statements.length - 1) {
+    const hasThrowAfterLogging = statements.slice(loggingIndex + 1).some(
+      (stmt) => stmt.type === 'ThrowStatement'
+    );
+    
+    if (hasThrowAfterLogging) {
+      throw new Error(`${file}:${catchClause.loc?.start.line} - После логирования в catch-блоке недопустимо выбрасывать новую ошибку. Используйте обработку ошибки вместо повторного выбрасывания.`);
+    }
+  }
 } 

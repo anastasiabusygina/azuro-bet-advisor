@@ -78,10 +78,10 @@ const findFilesWithZodValidation = (): string[] => {
 };
 
 // Функция для нахождения переменных и констант в файле
-const findExportedVariables = (file: string): string[] => {
+const findExportedVariables = (file: string): Array<{name: string, line: number}> => {
   try {
     const fileContent = fs.readFileSync(file, 'utf-8');
-    const exportedVariables: string[] = [];
+    const exportedVariables: Array<{name: string, line: number}> = [];
     
     // Используем typescript AST для получения информации о экспортируемых переменных
     const sourceFile = ts.createSourceFile(
@@ -98,8 +98,10 @@ const findExportedVariables = (file: string): string[] => {
         node.declarationList.declarations.forEach(declaration => {
           if (ts.isIdentifier(declaration.name)) {
             const variableName = declaration.name.text;
+            const lineNumber = sourceFile.getLineAndCharacterOfPosition(declaration.name.pos).line + 1;
+            
             // console.log(`Найдена экспортируемая переменная: ${variableName} в файле ${file}`);
-            exportedVariables.push(variableName);
+            exportedVariables.push({ name: variableName, line: lineNumber });
           }
         });
       }
@@ -107,8 +109,10 @@ const findExportedVariables = (file: string): string[] => {
       // Ищем экспорт по умолчанию
       if (ts.isExportAssignment(node) && ts.isIdentifier(node.expression)) {
         const variableName = node.expression.text;
+        const lineNumber = sourceFile.getLineAndCharacterOfPosition(node.expression.pos).line + 1;
+        
         // console.log(`Найдена экспортируемая переменная по умолчанию: ${variableName} в файле ${file}`);
-        exportedVariables.push(variableName);
+        exportedVariables.push({ name: variableName, line: lineNumber });
       }
       
       // Рекурсивно обходим все дочерние узлы
@@ -168,9 +172,8 @@ const checkAllVariablesUsage = () => {
     
     // Для каждого файла находим экспортируемые переменные и проверяем их использование
     let totalVars = 0;
-    let unusedVars = 0;
-    const unusedVarsDetails: {file: string, varName: string}[] = [];
-    const allVarsDetails: {file: string, varName: string, isUsed: boolean, usedInFiles: string[]}[] = [];
+    const unusedVars: {file: string, varName: string, line?: number}[] = [];
+    const allVarsDetails: {file: string, varName: string, line?: number, isUsed: boolean, usedInFiles: string[]}[] = [];
     
     filesWithZod.forEach(file => {
       const exportedVars = findExportedVariables(file);
@@ -180,13 +183,12 @@ const checkAllVariablesUsage = () => {
         return;
       }
       
-      exportedVars.forEach(varName => {
-        const { isUsed, usedInFiles } = checkIfVariableIsUsed(varName, file);
-        allVarsDetails.push({ file, varName, isUsed, usedInFiles });
+      exportedVars.forEach(varInfo => {
+        const { isUsed, usedInFiles } = checkIfVariableIsUsed(varInfo.name, file);
+        allVarsDetails.push({ file, varName: varInfo.name, line: varInfo.line, isUsed, usedInFiles });
         
         if (!isUsed) {
-          unusedVars++;
-          unusedVarsDetails.push({ file, varName });
+          unusedVars.push({ file, varName: varInfo.name, line: varInfo.line });
         }
       });
     });
@@ -197,7 +199,7 @@ const checkAllVariablesUsage = () => {
     // Сортируем по имени переменной для лучшей читаемости
     allVarsDetails.sort((a, b) => a.varName.localeCompare(b.varName));
     
-    allVarsDetails.forEach(({ varName, file, isUsed, usedInFiles }) => {
+    allVarsDetails.forEach(({ varName, file, line, isUsed, usedInFiles }) => {
       if (isUsed) {
         console.log(`${varName} (из ${file}) → ${usedInFiles.join(', ')}`);
       } else {
@@ -209,8 +211,8 @@ const checkAllVariablesUsage = () => {
     console.log('\n=== ИТОГОВАЯ СТАТИСТИКА ===');
     console.log(`Всего файлов с Zod: ${filesWithZod.length}`);
     console.log(`Всего переменных: ${totalVars}`);
-    console.log(`Используемых переменных: ${totalVars - unusedVars}`);
-    console.log(`Неиспользуемых переменных: ${unusedVars}`);
+    console.log(`Используемых переменных: ${totalVars - unusedVars.length}`);
+    console.log(`Неиспользуемых переменных: ${unusedVars.length}`);
     
     // Проверяем наличие обязательных файлов
     const missingMandatory = mandatoryZodValidationFiles.filter(
@@ -254,26 +256,26 @@ if (typeof describe !== 'undefined') {
       const filesWithZod = findFilesWithZodValidation();
       
       // Сохраняем данные обо всех переменных
-      const allVarsDetails: {file: string, varName: string, isUsed: boolean, usedInFiles: string[]}[] = [];
-      const unusedVars: {file: string, varName: string}[] = [];
+      const allVarsDetails: {file: string, varName: string, line: number, isUsed: boolean, usedInFiles: string[]}[] = [];
+      const unusedVars: {file: string, varName: string, line: number}[] = [];
       
       // Создаем Map для отслеживания обработанных переменных и предотвращения дублирования
-      const processedVars = new Map<string, {file: string, isUsed: boolean, usedInFiles: string[]}>();
+      const processedVars = new Map<string, {file: string, line: number, isUsed: boolean, usedInFiles: string[]}>();
       
       // Собираем информацию о всех переменных
       filesWithZod.forEach(file => {
         const exportedVars = findExportedVariables(file);
         
-        exportedVars.forEach(varName => {
+        exportedVars.forEach(varInfo => {
           // Проверяем, не обрабатывали ли мы уже эту переменную из этого файла
-          const varKey = `${varName}:${file}`;
+          const varKey = `${varInfo.name}:${file}`;
           if (!processedVars.has(varKey)) {
-            const { isUsed, usedInFiles } = checkIfVariableIsUsed(varName, file);
-            allVarsDetails.push({ file, varName, isUsed, usedInFiles });
-            processedVars.set(varKey, { file, isUsed, usedInFiles });
+            const { isUsed, usedInFiles } = checkIfVariableIsUsed(varInfo.name, file);
+            allVarsDetails.push({ file, varName: varInfo.name, line: varInfo.line, isUsed, usedInFiles });
+            processedVars.set(varKey, { file, line: varInfo.line, isUsed, usedInFiles });
             
             if (!isUsed) {
-              unusedVars.push({ file, varName });
+              unusedVars.push({ file, varName: varInfo.name, line: varInfo.line });
             }
           }
         });
@@ -285,11 +287,20 @@ if (typeof describe !== 'undefined') {
       // Сортируем по имени переменной для лучшей читаемости
       allVarsDetails.sort((a, b) => a.varName.localeCompare(b.varName));
       
-      allVarsDetails.forEach(({ varName, file, isUsed, usedInFiles }) => {
+      allVarsDetails.forEach(({ varName, file, line, isUsed, usedInFiles }) => {
         if (isUsed) {
           console.log(`${varName} (из ${file}) → ${usedInFiles.join(', ')}`);
         } else {
-          console.warn(`${varName} (из ${file}) → НЕ ИСПОЛЬЗУЕТСЯ`);
+          // Читаем содержимое файла, чтобы показать строку объявления
+          try {
+            const content = fs.readFileSync(file, 'utf8');
+            const lines = content.split('\n');
+            const declarationLine = lines[line - 1].trim();
+            console.warn(`${varName} (из ${file}:${line}) → НЕ ИСПОЛЬЗУЕТСЯ`);
+            console.warn(`    ${line}: ${declarationLine}`);
+          } catch (err) {
+            console.warn(`${varName} (из ${file}:${line}) → НЕ ИСПОЛЬЗУЕТСЯ`);
+          }
         }
       });
       
@@ -309,7 +320,18 @@ if (typeof describe !== 'undefined') {
       
       // Проверяем, что все переменные используются
       if (unusedVars.length > 0) {
-        console.error(`\n❌ Найдены неиспользуемые переменные: ${unusedVars.map(v => `${v.varName} (из ${v.file})`).join(', ')}`);
+        console.error('\n❌ Найдены неиспользуемые переменные:');
+        unusedVars.forEach((v, index) => {
+          try {
+            const content = fs.readFileSync(v.file, 'utf8');
+            const lines = content.split('\n');
+            const declarationLine = lines[v.line - 1].trim();
+            console.error(`${index + 1}. ${v.varName} (в файле ${v.file}, строка ${v.line}):`);
+            console.error(`   ${v.line}: ${declarationLine}`);
+          } catch (err) {
+            console.error(`${index + 1}. ${v.varName} (в файле ${v.file}, строка ${v.line})`);
+          }
+        });
       }
       expect(unusedVars.length).toBe(0);
     });
@@ -325,26 +347,26 @@ if (typeof describe === 'undefined') {
   const filesWithZod = findFilesWithZodValidation();
   
   // Сохраняем данные обо всех переменных
-  const allVarsDetails: {file: string, varName: string, isUsed: boolean, usedInFiles: string[]}[] = [];
-  const unusedVars: {file: string, varName: string}[] = [];
+  const allVarsDetails: {file: string, varName: string, line: number, isUsed: boolean, usedInFiles: string[]}[] = [];
+  const unusedVars: {file: string, varName: string, line: number}[] = [];
   
   // Создаем Map для отслеживания обработанных переменных и предотвращения дублирования
-  const processedVars = new Map<string, {file: string, isUsed: boolean, usedInFiles: string[]}>();
+  const processedVars = new Map<string, {file: string, line: number, isUsed: boolean, usedInFiles: string[]}>();
   
   // Собираем информацию о всех переменных
   filesWithZod.forEach(file => {
     const exportedVars = findExportedVariables(file);
     
-    exportedVars.forEach(varName => {
+    exportedVars.forEach(varInfo => {
       // Проверяем, не обрабатывали ли мы уже эту переменную из этого файла
-      const varKey = `${varName}:${file}`;
+      const varKey = `${varInfo.name}:${file}`;
       if (!processedVars.has(varKey)) {
-        const { isUsed, usedInFiles } = checkIfVariableIsUsed(varName, file);
-        allVarsDetails.push({ file, varName, isUsed, usedInFiles });
-        processedVars.set(varKey, { file, isUsed, usedInFiles });
+        const { isUsed, usedInFiles } = checkIfVariableIsUsed(varInfo.name, file);
+        allVarsDetails.push({ file, varName: varInfo.name, line: varInfo.line, isUsed, usedInFiles });
+        processedVars.set(varKey, { file, line: varInfo.line, isUsed, usedInFiles });
         
         if (!isUsed) {
-          unusedVars.push({ file, varName });
+          unusedVars.push({ file, varName: varInfo.name, line: varInfo.line });
         }
       }
     });
@@ -356,11 +378,20 @@ if (typeof describe === 'undefined') {
   // Сортируем по имени переменной для лучшей читаемости
   allVarsDetails.sort((a, b) => a.varName.localeCompare(b.varName));
   
-  allVarsDetails.forEach(({ varName, file, isUsed, usedInFiles }) => {
+  allVarsDetails.forEach(({ varName, file, line, isUsed, usedInFiles }) => {
     if (isUsed) {
       console.log(`${varName} (из ${file}) → ${usedInFiles.join(', ')}`);
     } else {
-      console.warn(`${varName} (из ${file}) → НЕ ИСПОЛЬЗУЕТСЯ`);
+      // Читаем содержимое файла, чтобы показать строку объявления
+      try {
+        const content = fs.readFileSync(file, 'utf8');
+        const lines = content.split('\n');
+        const declarationLine = lines[line - 1].trim();
+        console.warn(`${varName} (из ${file}:${line}) → НЕ ИСПОЛЬЗУЕТСЯ`);
+        console.warn(`    ${line}: ${declarationLine}`);
+      } catch (err) {
+        console.warn(`${varName} (из ${file}:${line}) → НЕ ИСПОЛЬЗУЕТСЯ`);
+      }
     }
   });
   
@@ -370,6 +401,22 @@ if (typeof describe === 'undefined') {
   console.log(`Всего переменных: ${allVarsDetails.length}`);
   console.log(`Используемых переменных: ${allVarsDetails.length - unusedVars.length}`);
   console.log(`Неиспользуемых переменных: ${unusedVars.length}`);
+  
+  // Выводим детальную информацию о неиспользуемых переменных
+  if (unusedVars.length > 0) {
+    console.error('\n❌ Найдены неиспользуемые переменные:');
+    unusedVars.forEach((v, index) => {
+      try {
+        const content = fs.readFileSync(v.file, 'utf8');
+        const lines = content.split('\n');
+        const declarationLine = lines[v.line - 1].trim();
+        console.error(`${index + 1}. ${v.varName} (в файле ${v.file}, строка ${v.line}):`);
+        console.error(`   ${v.line}: ${declarationLine}`);
+      } catch (err) {
+        console.error(`${index + 1}. ${v.varName} (в файле ${v.file}, строка ${v.line})`);
+      }
+    });
+  }
 }
 
 // Экспорт функций для использования в других модулях или запуска из командной строки

@@ -25,6 +25,9 @@ const config: Config.InitialOptions = {
     '/archive/',
   ],
   
+  // Настройка вывода консоли для тестов
+  verbose: true,
+  
   // Файлы, которые следует исключить из покрытия
   coveragePathIgnorePatterns: [
     '/node_modules/',

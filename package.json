@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "jest --config jest.config.ts",
-    "test:ast": "jest --config jest.config.ts tests/ast/",
+    "test:ast": "jest --config jest.config.ts tests/ast/ --no-colors | awk '/console\\.(log|warn|error)/ {printf \"\\n\"; getline; if ($0) print \"   \" $0}'",
     "lint": "eslint . --ext .ts",
     "build": "tsc",
     "start": "node dist/index.js",

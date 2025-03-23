@@ -132,15 +132,6 @@ interface ApiConfig {
   graphUrl: string;
 }
 
-interface MatchesConfig {
-  defaultTimeWindowSeconds: number;
-  defaultMinOdds: number;
-  formats?: {
-    text: {
-      template: string;
-    }
-  }
-}
 
 interface GraphqlConfig {
   queries: {

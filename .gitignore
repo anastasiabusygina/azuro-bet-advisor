@@ -46,11 +46,11 @@ lerna-debug.log*
 *.sublime-workspace
 
 # Конкретные временные файлы и данные
-config/temp/*.json
-config/temp/*.txt
-config/match_data/*.json
-config/output/*.txt
-config/output/*.json
+temp/cache/*.json
+temp/logs/*.txt
+data/match_data/*.json
+data/output/*.txt
+data/output/*.json
 .cursor/
 temp/api_response.json
 temp/match_data.json
@@ -59,8 +59,8 @@ temp/upcoming_matches_query.json
 temp/script_log.txt
 
 # Не игнорировать примеры и тесты
-!config/match_data/examples/
-!config/output/examples/
+!data/match_data/examples/
+!data/output/examples/
 
 # Конфигурация TypeScript
 **/tsconfig.json 

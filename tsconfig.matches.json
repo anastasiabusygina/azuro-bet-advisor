@@ -13,5 +13,5 @@
     "noEmitOnError": false
   },
   "include": ["src/scripts/matches.ts"],
-  "exclude": ["node_modules", "dist", "archive"]
+  "exclude": ["node_modules", "dist"]
 } 

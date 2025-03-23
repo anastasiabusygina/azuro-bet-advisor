@@ -1,1 +1,0 @@
-scripts/bash/show_upcoming_matches.sh

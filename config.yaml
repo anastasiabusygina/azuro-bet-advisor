@@ -1,0 +1,13 @@
+# Публичные настройки приложения
+
+# Настройки спорта
+sport:
+  name: Football
+
+# Настройки блокчейна
+chain:
+  network: polygon-mainnet
+
+# Настройки API
+api:
+  graphUrl: https://thegraph.azuro.org/subgraphs/name/azuro-protocol/azuro-api-polygon-v3 

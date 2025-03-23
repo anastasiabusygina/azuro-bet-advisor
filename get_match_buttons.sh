@@ -1,1 +1,0 @@
-scripts/bash/get_match_buttons.sh

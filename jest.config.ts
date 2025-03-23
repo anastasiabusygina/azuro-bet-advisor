@@ -22,6 +22,7 @@ const config: Config.InitialOptions = {
     '/azuro/queries/',
     '/temp_storage/',
     '/config/',
+    '/archive/',
   ],
   
   // Файлы, которые следует исключить из покрытия
@@ -48,7 +49,7 @@ const config: Config.InitialOptions = {
   testEnvironment: 'node',
   
   // Файл с глобальной настройкой
-  setupFilesAfterEnv: ['./test.setup.ts'],
+  setupFilesAfterEnv: ['./tests/test.setup.ts'],
   
   // Переопределяем модули, которые могут вызывать проблемы при тестировании
   moduleNameMapper: {

@@ -1,5 +1,4 @@
 import { Game } from '../interfaces/match';
-import { matchesConfig } from '../config/config';
 
 /**
  * Конвертирует время в московское
@@ -7,15 +6,22 @@ import { matchesConfig } from '../config/config';
 export function toMoscowTime(timestamp: number): string {
   const date = new Date(timestamp * 1000);
   
-  return new Intl.DateTimeFormat('ru-RU', matchesConfig.timeZone?.dateFormat).format(date);
+  return new Intl.DateTimeFormat('ru-RU', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Moscow'
+  }).format(date);
 }
 
 /**
  * Получает матчи из API или другого источника
  */
 export async function getMatches(
-  timeWindow: number, 
-  sportName: string
+  _timeWindow: number, 
+  _sportName: string
 ): Promise<Game[]> {
   // Заглушка - в реальном коде здесь будет запрос к API
   return [

@@ -9,9 +9,58 @@ import * as path from 'path';
 import * as yaml from 'js-yaml';
 import { z } from 'zod';
 
+// Функция для логирования ошибок
+function logError(message: string): void {
+  // В данном случае просто выводим в stderr для имитации логирования
+  process.stderr.write(`[ERROR] ${message}\n`);
+}
+
+// Схема конфигурации для валидации
+const configSchema = z.object({
+  sport: z.object({
+    name: z.string().min(1)
+  }),
+  chain: z.object({
+    network: z.string().min(1)
+  }),
+  api: z.object({
+    graphUrl: z.string().url()
+  }),
+  matches: z.object({
+    defaultTimeWindowSeconds: z.number(),
+    defaultMinOdds: z.number(),
+    formats: z.object({
+      text: z.object({
+        template: z.string()
+      })
+    }).optional()
+  }),
+  graphql: z.object({
+    queries: z.object({
+      gameData: z.string()
+    })
+  }),
+  paths: z.object({
+    outputDir: z.string()
+  }),
+  defaults: z.object({
+    marketKey: z.string(),
+    unknownValue: z.string()
+  }),
+  errors: z.object({
+    configFileNotFound: z.string(),
+    configFileEmpty: z.string(),
+    configCriticalError: z.string(),
+    configAppStartError: z.string()
+  })
+});
+
+// Тип конфигурации на основе схемы
+type ConfigType = z.infer<typeof configSchema>;
+
 // Загрузка конфигурации из YAML-файла
 const configPath = path.resolve(process.cwd(), 'config.yaml');
-let yamlConfig: any = {};
+let yamlConfig: ConfigType;
 
 try {
   // Проверяем существование файла конфигурации
@@ -26,42 +75,18 @@ try {
     throw new Error(`Файл конфигурации пуст или содержит некорректные данные: ${configPath}`);
   }
   
-  // Применяем Zod-схему для валидации - с явным вызовом parse() в формате, который ищет тест
-  yamlConfig = z.object({
-    sport: z.object({
-      name: z.string().min(1)
-    }),
-    chain: z.object({
-      network: z.string().min(1)
-    }),
-    api: z.object({
-      graphUrl: z.string().url()
-    }),
-    matches: z.object({
-      defaultTimeWindowSeconds: z.number(),
-      defaultMinOdds: z.number(),
-      formats: z.object({
-        text: z.object({
-          template: z.string()
-        })
-      }).optional()
-    }),
-    graphql: z.object({
-      queries: z.object({
-        gameData: z.string()
-      })
-    }),
-    paths: z.object({
-      outputDir: z.string()
-    }),
-    defaults: z.object({
-      marketKey: z.string(),
-      unknownValue: z.string()
-    })
-  }).parse(parsedConfig);
+  // Применяем Zod-схему для валидации
+  yamlConfig = configSchema.parse(parsedConfig);
 } catch (error) {
-  console.error(`Критическая ошибка конфигурации: ${error instanceof Error ? error.message : String(error)}`);
-  throw new Error(`Невозможно запустить приложение без корректного файла конфигурации. Проверьте config.yaml`);
+  // Используем логирование перед выбрасыванием ошибки
+  const errorDetails = error instanceof Error ? error.message : String(error);
+  
+  // В реальном приложении здесь будет логирование
+  // Например: logger.error(`Критическая ошибка конфигурации: ${errorDetails}`);
+  logError(`Критическая ошибка конфигурации: ${errorDetails}`);
+  
+  // Конструируем сообщение об ошибке
+  throw new Error(`Невозможно запустить приложение без корректного файла конфигурации. Проверьте config.yaml: ${errorDetails}`);
 }
 
 // Типизированные интерфейсы для конфигурации

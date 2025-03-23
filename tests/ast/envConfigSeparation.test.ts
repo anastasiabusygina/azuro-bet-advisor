@@ -4,7 +4,7 @@ import { parse } from '@typescript-eslint/parser';
 import { TSESTree, AST_NODE_TYPES } from '@typescript-eslint/types';
 import { glob } from 'glob';
 import { readFileSync } from 'fs';
-import { envConfigSeparation } from './envConfigSeparation.config';
+import { envConfigSeparation } from '../configs/envConfigSeparation.config';
 
 describe('Тест на строгое разделение env и config', () => {
   const files = glob.sync('src/**/*.ts', {

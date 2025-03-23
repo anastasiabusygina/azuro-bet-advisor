@@ -45,8 +45,8 @@
 export const allowedStructure = {
   src: ['api', 'config', 'services', 'utils', 'types', 'interfaces', 'features', 'scripts'],
   scripts: ['bash', 'node', 'data'],
-  tests: ['unit', 'integration', 'fixtures', 'ast'],
-  '': ['src', 'scripts', 'tests', 'docs', 'tasks', 'archive', 'dist', 'config', 'README.md', 'package.json', 'tsconfig.json', 'jest.config.ts', '.eslintrc.cjs', '.cursor', '.eslint', '.git', 'data', 'temp', 'node_modules']
+  tests: ['unit', 'integration', 'fixtures', 'ast', 'configs'],
+  '': ['src', 'scripts', 'tests', 'docs', 'tasks', 'archive', 'dist', 'config', 'README.md', 'package.json', 'tsconfig.json', 'jest.config.ts', '.eslintrc.cjs', 'eslint.config.js', '.cursor', '.eslint', '.git', 'data', 'temp', 'node_modules']
 };
 
 // Type definition for project structure

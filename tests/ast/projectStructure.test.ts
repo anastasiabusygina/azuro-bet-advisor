@@ -18,7 +18,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { allowedStructure, extendStructure, type ProjectStructure } from './projectStructure.config';
+import { allowedStructure, extendStructure, type ProjectStructure } from '../configs/projectStructure.config';
 
 const ROOT = process.cwd();
 

@@ -10,4 +10,60 @@ chain:
 
 # Настройки API
 api:
-  graphUrl: https://thegraph.azuro.org/subgraphs/name/azuro-protocol/azuro-api-polygon-v3 
+  graphUrl: https://thegraph.azuro.org/subgraphs/name/azuro-protocol/azuro-api-polygon-v3
+
+# Настройки матчей
+matches:
+  defaultTimeWindowSeconds: 86400
+  defaultMinOdds: 1.2
+  formats:
+    text:
+      template: |
+        Game Information:
+        Game ID: {{gameId}} [Use this ID when the bot recommends a match]
+        Title: {{gameTitle}}
+        League: {{leagueName}} ({{countryName}})
+        Teams: {{participants}}
+        Start Time (UTC): {{startTimeUTC}}
+        Start Time (МСК): {{startTimeMoscow}}
+        Network: {{network}}
+        Sport: {{sportName}}
+        
+        Available Betting Options:
+        [Bot recommendations will include Condition ID and Outcome ID - use these to find the correct betting option below]
+        {{formattedOdds}}
+
+# Настройки путей в приложении
+paths:
+  outputDir: "data/output"
+
+# Настройки запросов GraphQL
+graphql:
+  queries:
+    gameData: |
+      {
+        game(id: "%gameId%") {
+          id
+          title
+          startsAt
+          league {
+            title
+          }
+          conditions {
+            id
+            conditionId
+            param
+            outcomes {
+              id
+              outcomeId
+              currentOdds
+            }
+          }
+        }
+      }
+
+# Настройки парсинга аргументов командной строки
+cli:
+  defaultArgs:
+    format: text
+    outputFile: null 

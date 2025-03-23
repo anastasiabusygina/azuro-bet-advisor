@@ -1,9 +1,9 @@
 // tests/ast/deadFiles.test.ts
 
 import { glob } from 'glob';
-import { readFileSync } from 'fs';
-import * as path from 'path';
-import { entryFiles, deadFilesIgnore } from './deadFiles.config';
+import { readFileSync, readdirSync, statSync } from 'fs';
+import path from 'path';
+import { entryFiles, deadFilesIgnore } from '../configs/deadFiles.config';
 
 describe('AST: Мёртвые файлы (неиспользуемые .ts)', () => {
   test('Поиск мёртвых файлов', () => {

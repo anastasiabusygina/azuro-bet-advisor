@@ -4,20 +4,21 @@ import fetch from 'node-fetch';
 import * as dictionaries from '@azuro-org/dictionaries';
 import { Game, MatchState as State, Participant, Outcome, Condition } from '../interfaces/match';
 import { toMoscowTime, getMatches, filterGamesByOdds, formatMatches } from '../services/matchService';
-import { sportConfig, chainConfig, apiConfig } from '../config/config';
+import { sportConfig, chainConfig, apiConfig, matchesConfig, pathsConfig } from '../config/config';
 
-// Constants
-const DEFAULT_MATCH_TIME_WINDOW_SECONDS = 86400
-const DEFAULT_MIN_ODDS = 1.2
-const DEFAULT_SPORT_NAME = sportConfig.name
-const OUTPUT_DIR = path.join(__dirname, '../../data/output')
+// Constants from configuration
+const DEFAULT_MATCH_TIME_WINDOW_SECONDS = matchesConfig.defaultTimeWindowSeconds;
+const DEFAULT_MIN_ODDS = matchesConfig.defaultMinOdds;
+const DEFAULT_SPORT_NAME = sportConfig.name;
+const OUTPUT_DIR = path.join(process.cwd(), pathsConfig.outputDir);
 
 // Use configuration values
-const GRAPH_URL = apiConfig.graphUrl
-const NETWORK = chainConfig.network
+const GRAPH_URL = apiConfig.graphUrl;
+const NETWORK = chainConfig.network;
 
-// Match text template
-const matchTemplate = `
+// Match text template - use from config if available, otherwise use hardcoded version
+// @allow-const-hardcode
+const matchTemplate = matchesConfig.formats?.text?.template || `
 Game Information:
 Game ID: {{gameId}} [Use this ID when the bot recommends a match]
 Title: {{gameTitle}}
@@ -30,7 +31,7 @@ Sport: ${DEFAULT_SPORT_NAME}
 
 Available Betting Options:
 [Bot recommendations will include Condition ID and Outcome ID - use these to find the correct betting option below]
-{{formattedOdds}}`
+{{formattedOdds}}`;
 
 /**
  * Simple template engine replacement
@@ -39,6 +40,7 @@ function composeContext({ state, template }: { state: State; template: string })
   let result = template
   
   for (const [key, value] of Object.entries(state)) {
+    // @allow-const-hardcode
     const placeholder = `{{${key}}}`
     result = result.replace(new RegExp(placeholder, 'g'), String(value))
   }
@@ -77,6 +79,7 @@ async function composeGameState(game: Game): Promise<State> {
  */
 function parseArguments() {
   const args = process.argv.slice(2)
+  // @allow-const-hardcode
   const parsedArgs: { [key: string]: string | number | boolean | null } = {
     format: 'text',
     outputFile: null,

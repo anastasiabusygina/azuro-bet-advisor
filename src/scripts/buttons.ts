@@ -3,19 +3,16 @@ import * as fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import fetch from 'node-fetch';
 import * as dictionaries from '@azuro-org/dictionaries';
-import { sportConfig, chainConfig, apiConfig } from '../config/config';
+import { sportConfig, chainConfig, apiConfig, graphqlConfig, pathsConfig } from '../config/config';
 
 // Constants
-const __filename = process.cwd() + '/src/scripts/buttons.ts';
+// @allow-const-hardcode
+const __filename = import.meta.url ? fileURLToPath(import.meta.url) : process.cwd() + '/src/scripts/buttons.ts';
 const __dirname = path.dirname(__filename);
-const OUTPUT_DIR = path.join(__dirname, '../../data/output');
+const OUTPUT_DIR = path.join(process.cwd(), pathsConfig.outputDir);
 
 // URL API for requests using configuration values
 const API_URL = apiConfig.graphUrl;
-
-// Использование других конфигурационных значений
-const CURRENT_SPORT = sportConfig.name;
-const CURRENT_CHAIN = chainConfig.network;
 
 // Types definition
 interface Game {
@@ -67,29 +64,8 @@ async function getGameData(gameId: string): Promise<Game | null> {
       throw new Error('Invalid gameId: must be a non-empty string');
     }
     
-    // GraphQL query to get game data
-    const query = `
-      {
-        game(id: "${gameId}") {
-          id
-          title
-          startsAt
-          league {
-            title
-          }
-          conditions {
-            id
-            conditionId
-            param
-            outcomes {
-              id
-              outcomeId
-              currentOdds
-            }
-          }
-        }
-      }
-    `;
+    // GraphQL query to get game data from configuration
+    const query = graphqlConfig.queries.gameData.replace('%gameId%', gameId);
 
     // Send request to API
     const response = await fetch(API_URL, {

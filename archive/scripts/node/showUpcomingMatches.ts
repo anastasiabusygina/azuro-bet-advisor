@@ -133,7 +133,7 @@ function parseArguments() {
     const [key, value] = arg.split('=')
 
     switch (key) {
-      case '--t':
+      case '--t': {
         const timeWindow = Number(value)
         if (isNaN(timeWindow)) {
           console.error(`Error: The value t="${value}" is not a valid number.`)
@@ -141,6 +141,7 @@ function parseArguments() {
         }
         parsedArgs['timeWindow'] = timeWindow
         break
+      }
       default:
         console.log(`Unknown argument: ${arg}`)
         break

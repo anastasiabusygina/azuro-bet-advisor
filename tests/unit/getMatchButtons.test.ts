@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, test, jest, beforeEach } from '@jest/globals';
 import { getButtonText, processRecommendation } from './matchButtonMapper';
 

@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-
-const ROOT = path.resolve(__dirname, '..');
-const AST_TESTS_DIR = path.resolve(__dirname);
+import { ROOT_DIR, AST_TESTS_DIR, isTestProperlyPlaced, isASTTest } from '../configs/testPlacement.config';
 
 function findAllTests(dir: string): string[] {
   let results: string[] = [];
@@ -22,17 +20,8 @@ function findAllTests(dir: string): string[] {
   return results;
 }
 
-function isASTTest(filepath: string) {
-  return filepath.startsWith(AST_TESTS_DIR);
-}
-
-function isTestProperlyPlaced(filepath: string) {
-  const dirParts = path.dirname(filepath).split(path.sep);
-  return dirParts.includes('__tests__') || dirParts.includes('tests');
-}
-
 describe('🧪 Проверка расположения тестов рядом с функциональными файлами', () => {
-  const allTests = findAllTests(ROOT);
+  const allTests = findAllTests(ROOT_DIR);
 
   for (const testFile of allTests) {
     if (isASTTest(testFile)) continue;

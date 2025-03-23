@@ -1,21 +1,11 @@
 import { parse } from '@typescript-eslint/parser';
 import { glob } from 'glob';
 import { readFileSync } from 'fs';
+import { ALLOWED_ZONES, IGNORE_PATTERNS, ERROR_MESSAGES } from '../configs/configValidation.config';
 
 describe('Тест на наличие проверок конфигов и переменных окружения только на входе в приложение', () => {
-  // Разрешённые зоны для текущего проекта
-  const ALLOWED_ZONES = ['src/config/', 'scripts/node/', 'azuro-mapper.ts'];
-
   const files = glob.sync('**/*.{ts,js}', {
-    ignore: [
-      '**/*.test.ts',
-      '**/*.d.ts',
-      'node_modules/**',
-      'coverage/**',
-      'jest.config.ts',
-      'test.setup.ts',
-      'archive/**'
-    ]
+    ignore: IGNORE_PATTERNS
   });
 
   files.forEach((file) => {
@@ -48,7 +38,7 @@ function validateNode(node: any, file: string, isAllowed: boolean) {
     if (memberExpr.object?.object?.name === 'process' && 
         memberExpr.object?.property?.name === 'env') {
       if (!isAllowed) {
-        throw new Error(`${file}:${node.loc?.start.line} - Недопустимое обращение к переменной окружения (process.env.*) вне конфигурационного слоя.`);
+        throw new Error(ERROR_MESSAGES.ENV_ACCESS(file, node.loc?.start.line));
       }
     }
     
@@ -56,7 +46,7 @@ function validateNode(node: any, file: string, isAllowed: boolean) {
     if (memberExpr.object?.name === 'config' && 
         memberExpr.property?.name === 'get') {
       if (!isAllowed) {
-        throw new Error(`${file}:${node.loc?.start.line} - Недопустимое обращение к конфигурации (config.get(...)) вне конфигурационного слоя.`);
+        throw new Error(ERROR_MESSAGES.CONFIG_ACCESS(file, node.loc?.start.line));
       }
     }
   }

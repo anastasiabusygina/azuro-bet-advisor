@@ -2,27 +2,11 @@ import { parse } from '@typescript-eslint/parser';
 import { glob } from 'glob';
 import { readFileSync } from 'fs';
 import { TSESTree } from '@typescript-eslint/types';
+import { ignorePatterns, validLoggerPatterns } from '../configs/strictTryCatchValidation.config';
 
 describe('Строгий тест на корректность try-catch в проекте', () => {
   const files = glob.sync('**/*.{ts,js}', {
-    ignore: [
-      // Исключаем все тестовые файлы
-      '**/*.test.ts',
-      '**/*.test.js',
-      // Исключаем декларации типов
-      '**/*.d.ts',
-      // Исключаем скомпилированные файлы
-      'dist/**',
-      // Исключаем каталог тестов
-      'tests/**',
-      // Стандартные исключения
-      'node_modules/**',
-      'coverage/**',
-      'jest.config.ts',
-      'test.setup.ts',
-      // Исключаем архивный каталог
-      'archive/**'
-    ]
+    ignore: ignorePatterns
   });
 
   files.forEach((file) => {
@@ -107,14 +91,14 @@ function validateTryStatement(node: TSESTree.TryStatement, file: string) {
         // Стандартные методы логирования (console.log, console.error и т.д.)
         (stmt.expression.callee.type === 'MemberExpression' &&
           stmt.expression.callee.property.type === 'Identifier' &&
-          ['log', 'error', 'warn', 'info', 'debug'].includes(stmt.expression.callee.property.name)) ||
+          validLoggerPatterns.standardMethods.includes(stmt.expression.callee.property.name)) ||
         // Прямые вызовы функций логирования (captureException, logError и т.д.)
         (stmt.expression.callee.type === 'Identifier' &&
-          ['captureException', 'logError', 'reportError'].includes(stmt.expression.callee.name)) ||
+          validLoggerPatterns.directFunctions.includes(stmt.expression.callee.name)) ||
         // Методы кастомных логгеров (logger.error, Logger.warn и т.д.)
         (stmt.expression.callee.type === 'MemberExpression' &&
           stmt.expression.callee.object.type === 'Identifier' &&
-          ['logger', 'Logger', 'logging', 'Sentry', 'elizaLogger'].includes(stmt.expression.callee.object.name))
+          validLoggerPatterns.customLoggers.includes(stmt.expression.callee.object.name))
       )
   );
   

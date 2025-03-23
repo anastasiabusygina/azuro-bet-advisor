@@ -4,41 +4,18 @@ import * as path from 'path';
 import type { Node } from 'estree';
 import * as glob from 'glob';
 import * as ts from 'typescript';
-
-// Файлы, которые ОБЯЗАТЕЛЬНО должны иметь валидацию Zod
-const mandatoryZodValidationFiles = [
-  'src/config/config.ts',
-  'src/config/validateEnv.ts'
-];
-
-// Исключения - файлы, которые НЕ должны проверяться
-const excludePatterns = [
-  // Исключаем файлы сборки
-  'dist/**/*',
-  'build/**/*',
-  // Исключаем временные файлы
-  'temp/**/*',
-  'tmp/**/*',
-  // Другие исключения можно добавить здесь
-];
+import {
+  mandatoryZodValidationFiles,
+  excludePatterns,
+  excludeDirectories,
+  zodValidationPatterns,
+  getImportPatterns
+} from '../configs/unusedZodVars.config';
 
 // Получаем список всех файлов проекта для проверки
 const getAllProjectFiles = (): string[] => {
-  // Шаблоны файлов и директорий, которые нужно исключить
-  const excludePatterns: string[] = [
-    'node_modules',
-    'dist',
-    'build',
-    'coverage',
-    'tests',
-    '.git',
-    '.idea',
-    'public',
-    'static'
-  ];
-  
   // Получаем список всех файлов .ts и .js в директории src
-  const allFiles = glob.sync('src/**/*.{ts,js}', { ignore: excludePatterns.map(pattern => `**/${pattern}/**`) });
+  const allFiles = glob.sync('src/**/*.{ts,js}', { ignore: excludeDirectories.map(pattern => `**/${pattern}/**`) });
   
   // Возвращаем относительные пути
   return allFiles;
@@ -46,13 +23,7 @@ const getAllProjectFiles = (): string[] => {
 
 // Функция для определения наличия Zod-валидации в файле
 const hasZodValidation = (content: string): boolean => {
-  return (
-    /Zod\.object\(.+\)\.(parse|safeParse)\(/.test(content) ||
-    /z\.object\(.+\)\.(parse|safeParse)\(/.test(content) ||
-    /schema\.(parse|safeParse)\(/.test(content) ||
-    /configSchema\.parse\(/.test(content) ||
-    /\.parse\(process\.env\)/.test(content)
-  );
+  return zodValidationPatterns.some(pattern => pattern.test(content));
 };
 
 // Функция для нахождения всех файлов с Zod-валидацией
@@ -138,11 +109,7 @@ const checkIfVariableIsUsed = (variableName: string, sourceFile: string): { isUs
       const content = fs.readFileSync(file, 'utf-8');
       
       // Импорт переменной может выглядеть по-разному, проверяем все варианты
-      const importPatterns = [
-        new RegExp(`import\\s+{[^}]*\\b${variableName}\\b[^}]*}\\s+from\\s+['"]`),
-        new RegExp(`import\\s+${variableName}\\s+from\\s+['"]`),
-        new RegExp(`(?<!['"])\\b${variableName}\\b(?!\\s*:)`)
-      ];
+      const importPatterns = getImportPatterns(variableName);
       
       // Проверяем наличие импорта или использования переменной
       if (file !== sourceFile && importPatterns.some(pattern => pattern.test(content))) {

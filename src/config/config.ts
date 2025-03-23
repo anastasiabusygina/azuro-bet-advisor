@@ -15,55 +15,26 @@ function logError(message: string): void {
   process.stderr.write(`[ERROR] ${message}\n`);
 }
 
-// Схема конфигурации для валидации
-const configSchema = z.object({
-  sport: z.object({
-    name: z.string().min(1)
+export const configSchema = z.object({
+  app: z.object({
+    port: z.number().min(1).max(65535),
+    host: z.string().default('localhost'),
+    environment: z.enum(['development', 'testing', 'production'])
   }),
-  chain: z.object({
-    network: z.string().min(1)
-  }),
-  api: z.object({
-    graphUrl: z.string().url()
-  }),
-  matches: z.object({
-    defaultTimeWindowSeconds: z.number(),
-    defaultMinOdds: z.number(),
-    formats: z.object({
-      text: z.object({
-        template: z.string()
-      })
-    }).optional()
-  }),
-  graphql: z.object({
-    queries: z.object({
-      gameData: z.string()
-    })
-  }),
-  paths: z.object({
-    outputDir: z.string()
-  }),
-  defaults: z.object({
-    marketKey: z.string(),
-    unknownValue: z.string()
-  }),
-  errors: z.object({
-    configFileNotFound: z.string(),
-    configFileEmpty: z.string(),
-    configCriticalError: z.string(),
-    configAppStartError: z.string()
+  database: z.object({
+    url: z.string().url(),
+    poolSize: z.number().positive().default(10)
   })
 });
 
-// Тип конфигурации на основе схемы
-type ConfigType = z.infer<typeof configSchema>;
+export type AppConfig = z.infer<typeof configSchema>;
 
 // Индикатор ошибки конфигурации
 let configError: {error: boolean, message: string} | null = null;
 
 // Загрузка конфигурации из YAML-файла
 const configPath = path.resolve(process.cwd(), 'config.yaml');
-let yamlConfig: ConfigType | null = null;
+let yamlConfig: AppConfig | null = null;
 
 try {
   // Проверяем существование файла конфигурации
@@ -119,94 +90,15 @@ function getConfigValue<T>(path: string[], defaultValue: T): T {
   return current !== undefined ? current : defaultValue;
 }
 
-// Типизированные интерфейсы для конфигурации
-interface SportConfig {
-  name: string;
-}
-
-interface ChainConfig {
-  network: string;
-}
-
-interface ApiConfig {
-  graphUrl: string;
-}
-
-
-interface GraphqlConfig {
-  queries: {
-    gameData: string;
-  }
-}
-
-interface PathsConfig {
-  outputDir: string;
-}
-
-interface DefaultsConfig {
-  marketKey: string;
-  unknownValue: string;
-}
-
-interface AppConfig {
-  sport: SportConfig;
-  chain: ChainConfig;
-  api: ApiConfig;
-  matches: MatchesConfig;
-  graphql: GraphqlConfig;
-  paths: PathsConfig;
-  defaults: DefaultsConfig;
-}
-
-// Конфигурация спорта
-export const sportConfig: SportConfig = {
-  name: getConfigValue(['sport', 'name'], 'unknown')
-};
-
-// Конфигурация блокчейна
-export const chainConfig: ChainConfig = {
-  network: getConfigValue(['chain', 'network'], 'unknown')
-};
-
-// Конфигурация API
-export const apiConfig: ApiConfig = {
-  graphUrl: getConfigValue(['api', 'graphUrl'], 'https://example.com/api')
-};
-
-// Конфигурация матчей
-export const matchesConfig: MatchesConfig = {
-  defaultTimeWindowSeconds: getConfigValue(['matches', 'defaultTimeWindowSeconds'], 0),
-  defaultMinOdds: getConfigValue(['matches', 'defaultMinOdds'], 0),
-  formats: getConfigValue(['matches', 'formats'], undefined)
-};
-
-// Конфигурация GraphQL
-export const graphqlConfig: GraphqlConfig = {
-  queries: {
-    gameData: getConfigValue(['graphql', 'queries', 'gameData'], '')
-  }
-};
-
-// Конфигурация путей
-export const pathsConfig: PathsConfig = {
-  outputDir: getConfigValue(['paths', 'outputDir'], '')
-};
-
-// Конфигурация значений по умолчанию
-export const defaultsConfig: DefaultsConfig = {
-  marketKey: getConfigValue(['defaults', 'marketKey'], ''),
-  unknownValue: getConfigValue(['defaults', 'unknownValue'], '')
-};
-
 // Экспорт общей конфигурации для удобства использования
-export const config: AppConfig = {
-  sport: sportConfig,
-  chain: chainConfig,
-  api: apiConfig,
-  matches: matchesConfig,
-  graphql: graphqlConfig,
-  paths: pathsConfig,
-  defaults: defaultsConfig
-};
-
-export default config; 
+export const config = configSchema.parse({
+  app: {
+    port: 3000,
+    host: 'localhost',
+    environment: 'development'
+  },
+  database: {
+    url: 'postgresql://user:password@localhost:5432/dbname',
+    poolSize: 20
+  }
+}); 

@@ -1,12 +1,17 @@
 import { glob } from 'glob';
 import { readFileSync } from 'fs';
+import { 
+  CONFIG_FILES, 
+  CONFIG_FILES_PATTERN, 
+  IGNORE_PATTERNS, 
+  VALIDATION_PATTERNS,
+  VALIDATION_ERROR_MESSAGE 
+} from '../configs/configPresenceValidation.config';
 
 describe('Тест на наличие обязательной валидации переменных окружения', () => {
-  const CONFIG_FILES = ['src/config/', 'scripts/node/', 'azuro-mapper.ts'];
-
   test('Проверка наличия валидации конфигов в разрешённых файлах', () => {
-    const files = glob.sync('{src/config/,scripts/node/,azuro-mapper.ts}/**/*.{ts,js}', {
-      ignore: ['archive/**']
+    const files = glob.sync(CONFIG_FILES_PATTERN, {
+      ignore: IGNORE_PATTERNS
     });
     let validationFound = false;
 
@@ -14,13 +19,9 @@ describe('Тест на наличие обязательной валидаци
       const content = readFileSync(file, 'utf-8');
       console.log(`Проверяем файл: ${file}`);
       console.log(`Содержимое: ${content.substring(0, 300)}...`);
-      if (
-        /Joi\.object\s*\([\s\S]*?\)\s*\.validate\s*\(/.test(content) ||
-        /Zod\.object\s*\([\s\S]*?\)\s*\.(parse|safeParse)\s*\(/.test(content) ||
-        /z\.object\s*\([\s\S]*?\)\s*\.(parse|safeParse)\s*\(/.test(content) ||
-        /Yup\.object\s*\([\s\S]*?\)\s*\.validate(Sync)?\s*\(/.test(content) ||
-        /schema\s*\.\s*(parse|safeParse)\s*\(/.test(content)
-      ) {
+      
+      // Проверяем наличие валидации с помощью регулярных выражений из конфигурации
+      if (VALIDATION_PATTERNS.some(pattern => pattern.test(content))) {
         console.log(`Найдена валидация в файле: ${file}`);
         validationFound = true;
         break;
@@ -28,7 +29,7 @@ describe('Тест на наличие обязательной валидаци
     }
 
     if (!validationFound) {
-      throw new Error('Не найдена обязательная валидация конфигурации (Joi/Zod/Yup) в разрешённых файлах!');
+      throw new Error(VALIDATION_ERROR_MESSAGE);
     }
   });
 });

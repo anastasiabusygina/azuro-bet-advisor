@@ -58,9 +58,12 @@ const configSchema = z.object({
 // Тип конфигурации на основе схемы
 type ConfigType = z.infer<typeof configSchema>;
 
+// Индикатор ошибки конфигурации
+let configError: {error: boolean, message: string} | null = null;
+
 // Загрузка конфигурации из YAML-файла
 const configPath = path.resolve(process.cwd(), 'config.yaml');
-let yamlConfig: ConfigType;
+let yamlConfig: ConfigType | null = null;
 
 try {
   // Проверяем существование файла конфигурации
@@ -78,15 +81,42 @@ try {
   // Применяем Zod-схему для валидации
   yamlConfig = configSchema.parse(parsedConfig);
 } catch (error) {
-  // Используем логирование перед выбрасыванием ошибки
+  // Используем логирование ошибки
   const errorDetails = error instanceof Error ? error.message : String(error);
   
   // В реальном приложении здесь будет логирование
   // Например: logger.error(`Критическая ошибка конфигурации: ${errorDetails}`);
   logError(`Критическая ошибка конфигурации: ${errorDetails}`);
   
-  // Конструируем сообщение об ошибке
-  throw new Error(`Невозможно запустить приложение без корректного файла конфигурации. Проверьте config.yaml: ${errorDetails}`);
+  // Запоминаем информацию об ошибке
+  configError = {
+    error: true,
+    message: `Ошибка конфигурации: ${errorDetails}`
+  };
+  
+  // Выводим предупреждение в консоль
+  console.warn(`Приложение запущено с ограниченной функциональностью из-за ошибки: ${errorDetails}`);
+}
+
+// Безопасная функция получения значений из конфигурации
+function getConfigValue<T>(path: string[], defaultValue: T): T {
+  // Если произошла ошибка конфигурации, возвращаем значение по умолчанию
+  if (configError || !yamlConfig) {
+    return defaultValue;
+  }
+  
+  let current: any = yamlConfig;
+  
+  // Обход по пути
+  for (const key of path) {
+    if (current && typeof current === 'object' && key in current) {
+      current = current[key];
+    } else {
+      return defaultValue;
+    }
+  }
+  
+  return current !== undefined ? current : defaultValue;
 }
 
 // Типизированные интерфейсы для конфигурации
@@ -139,42 +169,42 @@ interface AppConfig {
 
 // Конфигурация спорта
 export const sportConfig: SportConfig = {
-  name: yamlConfig.sport.name
+  name: getConfigValue(['sport', 'name'], 'unknown')
 };
 
 // Конфигурация блокчейна
 export const chainConfig: ChainConfig = {
-  network: yamlConfig.chain.network
+  network: getConfigValue(['chain', 'network'], 'unknown')
 };
 
 // Конфигурация API
 export const apiConfig: ApiConfig = {
-  graphUrl: yamlConfig.api.graphUrl
+  graphUrl: getConfigValue(['api', 'graphUrl'], 'https://example.com/api')
 };
 
 // Конфигурация матчей
 export const matchesConfig: MatchesConfig = {
-  defaultTimeWindowSeconds: yamlConfig.matches.defaultTimeWindowSeconds,
-  defaultMinOdds: yamlConfig.matches.defaultMinOdds,
-  formats: yamlConfig.matches.formats
+  defaultTimeWindowSeconds: getConfigValue(['matches', 'defaultTimeWindowSeconds'], 0),
+  defaultMinOdds: getConfigValue(['matches', 'defaultMinOdds'], 0),
+  formats: getConfigValue(['matches', 'formats'], undefined)
 };
 
 // Конфигурация GraphQL
 export const graphqlConfig: GraphqlConfig = {
   queries: {
-    gameData: yamlConfig.graphql.queries.gameData
+    gameData: getConfigValue(['graphql', 'queries', 'gameData'], '')
   }
 };
 
 // Конфигурация путей
 export const pathsConfig: PathsConfig = {
-  outputDir: yamlConfig.paths.outputDir
+  outputDir: getConfigValue(['paths', 'outputDir'], '')
 };
 
 // Конфигурация значений по умолчанию
 export const defaultsConfig: DefaultsConfig = {
-  marketKey: yamlConfig.defaults.marketKey,
-  unknownValue: yamlConfig.defaults.unknownValue
+  marketKey: getConfigValue(['defaults', 'marketKey'], ''),
+  unknownValue: getConfigValue(['defaults', 'unknownValue'], '')
 };
 
 // Экспорт общей конфигурации для удобства использования

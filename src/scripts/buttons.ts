@@ -120,7 +120,7 @@ async function getGameData(gameId: string): Promise<Game | null> {
   } catch (error) {
     console.error('Error fetching game data:', (error as Error).message);
     console.error(error);
-    throw error;
+    return null;
   }
 }
 
@@ -255,7 +255,9 @@ async function formatAllButtonsForGame(gameId: string, format: string, filterCon
       return null;
     }
     
-    const allButtons = [];
+    // Тип для результатов в зависимости от формата
+    type ButtonOutput = ReturnType<typeof formatButtonAsJson> | string;
+    const allButtons: ButtonOutput[] = [];
     
     for (const condition of gameData.conditions) {
       // Skip if we're filtering by conditionId and this isn't the one
@@ -283,7 +285,7 @@ async function formatAllButtonsForGame(gameId: string, format: string, filterCon
       return {
         gameId,
         title: gameData.title,
-        buttons: allButtons
+        buttons: allButtons as ReturnType<typeof formatButtonAsJson>[]
       };
     } else {
       return `
@@ -292,7 +294,7 @@ ID: ${gameId}
 Название: ${gameData.title}
 
 Доступные ставки:
-${allButtons.join('\n' + '-'.repeat(50) + '\n')}
+${(allButtons as string[]).join('\n' + '-'.repeat(50) + '\n')}
 `;
     }
   } catch (error) {

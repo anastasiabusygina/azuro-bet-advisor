@@ -3,7 +3,7 @@ import * as fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import fetch from 'node-fetch';
 import * as dictionaries from '@azuro-org/dictionaries';
-import { sportConfig, chainConfig, apiConfig, graphqlConfig, pathsConfig } from '../config/config';
+import { sportConfig, chainConfig, apiConfig, graphqlConfig, pathsConfig, defaultsConfig } from '../config/config';
 
 // Constants
 // @allow-const-hardcode
@@ -13,6 +13,13 @@ const OUTPUT_DIR = path.join(process.cwd(), pathsConfig.outputDir);
 
 // URL API for requests using configuration values
 const API_URL = apiConfig.graphUrl;
+
+// Текущие значения спорта и сети из конфигурации
+const CURRENT_SPORT = sportConfig.name;
+const CURRENT_CHAIN = chainConfig.network;
+
+// Значение по умолчанию из конфигурации
+const UNKNOWN_VALUE = defaultsConfig.unknownValue;
 
 // Types definition
 interface Game {
@@ -106,7 +113,7 @@ async function getGameData(gameId: string): Promise<Game | null> {
 
     // Add country field if missing
     if (game && !game.country) {
-      game.country = { name: 'Unknown' };
+      game.country = { name: UNKNOWN_VALUE };
     }
 
     return game || null;
@@ -164,10 +171,11 @@ async function getButtonText(gameId: string, conditionId: string, outcomeId: str
     // Get market key from dictionary
     const [outcomeIdStr] = conditionId.split('_');
     const outcomeId_parsed = parseInt(outcomeIdStr);
-    const marketKey = dictionaries.getMarketKey(outcomeId_parsed) || 'unknown';
+    const marketKey = dictionaries.getMarketKey(outcomeId_parsed) || defaultsConfig.marketKey;
     
     // Get market name from dictionary
-    const marketName = dictionaries.getMarketName({ marketKey }) || marketKey;
+    const marketName = dictionaries.getMarketName({ marketKey });
+  
     
     // Get selection name from dictionary
     const selectionName = dictionaries.getSelectionName({ 

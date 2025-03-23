@@ -62,8 +62,7 @@ graphql:
         }
       }
 
-# Настройки парсинга аргументов командной строки
-cli:
-  defaultArgs:
-    format: text
-    outputFile: null 
+# Значения по умолчанию (если отсутствуют в .env)
+defaults:
+  marketKey: "unknown"
+  unknownValue: "Unknown" 

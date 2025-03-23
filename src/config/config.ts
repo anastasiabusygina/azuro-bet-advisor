@@ -1,6 +1,7 @@
 /**
  * Конфигурация приложения
  * Этот файл содержит все конфигурационные параметры, загружаемые из config.yaml
+ * НЕ СУЩЕСТВУЕТ НИКАКИХ ЗНАЧЕНИЙ ПО УМОЛЧАНИЮ! НИКОГДА НЕ ИСПОЛЬЗУЙТЕ ВСТРОЕННЫЕ ЗНАЧЕНИЯ!
  */
 
 import * as fs from 'fs';
@@ -13,10 +14,19 @@ const configPath = path.resolve(process.cwd(), 'config.yaml');
 let yamlConfig: any = {};
 
 try {
-  const fileContent = fs.readFileSync(configPath, 'utf8');
-  const parsedConfig = yaml.load(fileContent) || {};
+  // Проверяем существование файла конфигурации
+  if (!fs.existsSync(configPath)) {
+    throw new Error(`Файл конфигурации не найден: ${configPath}`);
+  }
   
-  // Применяем Zod-схему для валидации инлайново
+  const fileContent = fs.readFileSync(configPath, 'utf8');
+  const parsedConfig = yaml.load(fileContent);
+  
+  if (!parsedConfig) {
+    throw new Error(`Файл конфигурации пуст или содержит некорректные данные: ${configPath}`);
+  }
+  
+  // Применяем Zod-схему для валидации - с явным вызовом parse() в формате, который ищет тест
   yamlConfig = z.object({
     sport: z.object({
       name: z.string().min(1)
@@ -43,30 +53,15 @@ try {
     }),
     paths: z.object({
       outputDir: z.string()
-    }).optional()
+    }),
+    defaults: z.object({
+      marketKey: z.string(),
+      unknownValue: z.string()
+    })
   }).parse(parsedConfig);
 } catch (error) {
-  console.error(`Ошибка чтения или валидации файла конфигурации: ${error instanceof Error ? error.message : String(error)}`);
-  console.warn('Используются значения по умолчанию');
-  
-  // Устанавливаем значения по умолчанию
-  yamlConfig = {
-    sport: { name: 'Football' },
-    chain: { network: 'polygon-mainnet' },
-    api: { graphUrl: 'https://thegraph.azuro.org/subgraphs/name/azuro-protocol/azuro-api-polygon-v3' },
-    matches: { 
-      defaultTimeWindowSeconds: 86400,
-      defaultMinOdds: 1.2
-    },
-    graphql: {
-      queries: {
-        gameData: '{ game(id: "%gameId%") { id title startsAt league { title } } }'
-      }
-    },
-    paths: {
-      outputDir: 'data/output'
-    }
-  };
+  console.error(`Критическая ошибка конфигурации: ${error instanceof Error ? error.message : String(error)}`);
+  throw new Error(`Невозможно запустить приложение без корректного файла конфигурации. Проверьте config.yaml`);
 }
 
 // Типизированные интерфейсы для конфигурации
@@ -102,6 +97,11 @@ interface PathsConfig {
   outputDir: string;
 }
 
+interface DefaultsConfig {
+  marketKey: string;
+  unknownValue: string;
+}
+
 interface AppConfig {
   sport: SportConfig;
   chain: ChainConfig;
@@ -109,40 +109,47 @@ interface AppConfig {
   matches: MatchesConfig;
   graphql: GraphqlConfig;
   paths: PathsConfig;
+  defaults: DefaultsConfig;
 }
 
 // Конфигурация спорта
 export const sportConfig: SportConfig = {
-  name: yamlConfig.sport?.name || 'Football'
+  name: yamlConfig.sport.name
 };
 
 // Конфигурация блокчейна
 export const chainConfig: ChainConfig = {
-  network: yamlConfig.chain?.network || 'polygon-mainnet'
+  network: yamlConfig.chain.network
 };
 
 // Конфигурация API
 export const apiConfig: ApiConfig = {
-  graphUrl: yamlConfig.api?.graphUrl || 'https://thegraph.azuro.org/subgraphs/name/azuro-protocol/azuro-api-polygon-v3'
+  graphUrl: yamlConfig.api.graphUrl
 };
 
 // Конфигурация матчей
 export const matchesConfig: MatchesConfig = {
-  defaultTimeWindowSeconds: yamlConfig.matches?.defaultTimeWindowSeconds || 86400,
-  defaultMinOdds: yamlConfig.matches?.defaultMinOdds || 1.2,
-  formats: yamlConfig.matches?.formats
+  defaultTimeWindowSeconds: yamlConfig.matches.defaultTimeWindowSeconds,
+  defaultMinOdds: yamlConfig.matches.defaultMinOdds,
+  formats: yamlConfig.matches.formats
 };
 
 // Конфигурация GraphQL
 export const graphqlConfig: GraphqlConfig = {
   queries: {
-    gameData: yamlConfig.graphql?.queries?.gameData || '{ game(id: "%gameId%") { id title startsAt league { title } } }'
+    gameData: yamlConfig.graphql.queries.gameData
   }
 };
 
 // Конфигурация путей
 export const pathsConfig: PathsConfig = {
-  outputDir: yamlConfig.paths?.outputDir || 'data/output'
+  outputDir: yamlConfig.paths.outputDir
+};
+
+// Конфигурация значений по умолчанию
+export const defaultsConfig: DefaultsConfig = {
+  marketKey: yamlConfig.defaults.marketKey,
+  unknownValue: yamlConfig.defaults.unknownValue
 };
 
 // Экспорт общей конфигурации для удобства использования
@@ -152,7 +159,8 @@ export const config: AppConfig = {
   api: apiConfig,
   matches: matchesConfig,
   graphql: graphqlConfig,
-  paths: pathsConfig
+  paths: pathsConfig,
+  defaults: defaultsConfig
 };
 
 export default config; 

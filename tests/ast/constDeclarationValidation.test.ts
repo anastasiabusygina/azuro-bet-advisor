@@ -15,12 +15,18 @@ import { constDeclarationConfig } from '../configs/constDeclarationValidation.co
  * включая константы внутри функций.
  * Все значения должны загружаться из YAML-файлов или переменных окружения.
  * 
+ * Явно исключены из проверки:
+ * - config.yaml - основной конфигурационный файл
+ * - .env - файл переменных окружения
+ * Эти исключения настроены в constDeclarationValidation.config.ts
+ * 
  * Константы, помеченные комментарием @allow-const-hardcode, игнорируются тестом.
- * Это ЕДИНСТВЕННЫЙ способ разрешить хардкоженную константу.
+ * Это ЕДИНСТВЕННЫЙ способ разрешить хардкоженную константу в проверяемых файлах.
  */
 
 describe('Тест на хардкоженные константы в коде', () => {
   // Поиск всех TypeScript файлов в директории src
+  // ignorePatterns из констиг-файла содержит исключения для config.yaml и .env
   const files = glob.sync('src/**/*.ts', {
     ignore: constDeclarationConfig.ignorePatterns,
   });
@@ -90,9 +96,7 @@ describe('Тест на хардкоженные константы в коде'
           constants.map(c => `- ${c.name}: ${c.value} (строка ${c.line})`).join('\n') +
           '\n\nРешения:\n' +
           '1. Вынести значение в конфигурационный файл\n' +
-          '2. Использовать переменные окружения\n' +
-          '3. Добавить комментарий @allow-const-hardcode перед объявлением константы';
-        
+          '2. Использовать переменные окружения\n';        
         throw new Error(errorMessage);
       }
     });
@@ -236,6 +240,28 @@ function isHardcodedValue(node: TSESTree.Expression, debug = false): boolean {
     case AST_NODE_TYPES.TemplateLiteral:
       // Проверяем шаблонные строки
       return true;
+      
+    case AST_NODE_TYPES.LogicalExpression:
+      // Проверяем логические выражения (x || 'default')
+      // Проверяем левую и правую части на наличие хардкода
+      if (debug) {
+        console.log(`    Проверка LogicalExpression - operator: ${node.operator}`);
+        console.log(`    Левая часть: ${node.left.type}`);
+        console.log(`    Правая часть: ${node.right.type}`);
+      }
+      
+      // Особое внимание к оператору || с хардкоженными значениями справа
+      if (node.operator === '||') {
+        // Проверяем правую часть на хардкод, так как она часто содержит значение по умолчанию
+        const rightIsHardcoded = isHardcodedValue(node.right, debug);
+        if (rightIsHardcoded && debug) {
+          console.log(`    Обнаружено хардкоженное значение в правой части LogicalExpression`);
+        }
+        return rightIsHardcoded;
+      }
+      
+      // Для других операторов проверяем обе части
+      return isHardcodedValue(node.left, debug) || isHardcodedValue(node.right, debug);
   }
   
   return false;

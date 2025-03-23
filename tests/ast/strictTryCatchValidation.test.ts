@@ -1,6 +1,7 @@
 import { parse } from '@typescript-eslint/parser';
 import { glob } from 'glob';
 import { readFileSync } from 'fs';
+import { TSESTree } from '@typescript-eslint/types';
 
 describe('Строгий тест на корректность try-catch в проекте', () => {
   const files = glob.sync('**/*.{ts,js}', {
@@ -43,19 +44,19 @@ describe('Строгий тест на корректность try-catch в п�
 });
 
 // Рекурсивный обход AST
-function traverseAST(node: any, file: string, ancestors: any[] = []) {
+function traverseAST(node: TSESTree.Node, file: string, ancestors: TSESTree.Node[] = []) {
   validateNode(node, file, ancestors);
-  Object.values(node).forEach((child) => {
+  Object.values(node).forEach((child: any) => {
     if (Array.isArray(child)) {
-      child.forEach((c) => c && typeof c.type === 'string' && traverseAST(c, file, [...ancestors, node]));
+      child.forEach((c: any) => c && typeof c.type === 'string' && traverseAST(c as TSESTree.Node, file, [...ancestors, node]));
     } else if (child && typeof child === 'object' && child.type && typeof child.type === 'string') {
-      traverseAST(child, file, [...ancestors, node]);
+      traverseAST(child as TSESTree.Node, file, [...ancestors, node]);
     }
   });
 }
 
 // Валидация узлов AST
-function validateNode(node: any, file: string, ancestors: any[]) {
+function validateNode(node: TSESTree.Node, file: string, ancestors: TSESTree.Node[]) {
   switch (node.type) {
     case 'AwaitExpression':
       if (!ancestors.some((ancestor) => ancestor.type === 'TryStatement')) {
@@ -68,13 +69,13 @@ function validateNode(node: any, file: string, ancestors: any[]) {
       }
       break;
     case 'TryStatement':
-      validateTryStatement(node, file);
+      validateTryStatement(node as TSESTree.TryStatement, file);
       break;
   }
 }
 
 // Проверка корректности try-catch блока
-function validateTryStatement(node: any, file: string) {
+function validateTryStatement(node: TSESTree.TryStatement, file: string) {
   const catchClause = node.handler;
   if (!catchClause) {
     throw new Error(`${file}:${node.loc?.start.line} - Try без catch недопустим.`);
@@ -99,13 +100,14 @@ function validateTryStatement(node: any, file: string) {
   
   // Расширенная проверка, что catch содержит обработку или логирование
   const hasHandlingOrLogging = statements.some(
-    (stmt) =>
+    (stmt: TSESTree.Statement) =>
       stmt.type === 'ExpressionStatement' &&
       stmt.expression.type === 'CallExpression' &&
       (
         // Стандартные методы логирования (console.log, console.error и т.д.)
         (stmt.expression.callee.type === 'MemberExpression' &&
-          ['log', 'error', 'warn', 'info', 'debug'].includes(stmt.expression.callee.property?.name || '')) ||
+          stmt.expression.callee.property.type === 'Identifier' &&
+          ['log', 'error', 'warn', 'info', 'debug'].includes(stmt.expression.callee.property.name)) ||
         // Прямые вызовы функций логирования (captureException, logError и т.д.)
         (stmt.expression.callee.type === 'Identifier' &&
           ['captureException', 'logError', 'reportError'].includes(stmt.expression.callee.name)) ||
@@ -123,7 +125,7 @@ function validateTryStatement(node: any, file: string) {
   // Дополнительная проверка: после логирования не должно быть повторного выбрасывания ошибки
   // Ищем индекс выражения с логированием
   const loggingIndex = statements.findIndex(
-    (stmt) =>
+    (stmt: TSESTree.Statement) =>
       stmt.type === 'ExpressionStatement' &&
       stmt.expression.type === 'CallExpression'
   );
@@ -131,7 +133,7 @@ function validateTryStatement(node: any, file: string) {
   // Проверяем, есть ли после логирования оператор throw
   if (loggingIndex !== -1 && loggingIndex < statements.length - 1) {
     const hasThrowAfterLogging = statements.slice(loggingIndex + 1).some(
-      (stmt) => stmt.type === 'ThrowStatement'
+      (stmt: TSESTree.Statement) => stmt.type === 'ThrowStatement'
     );
     
     if (hasThrowAfterLogging) {

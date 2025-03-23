@@ -64,12 +64,18 @@ describe('AST: Мёртвые файлы (неиспользуемые .ts)', ()
     );
 
     if (unusedFiles.length > 0) {
-      console.log('🔍 Найдены мёртвые (неиспользуемые) файлы:');
-      unusedFiles.forEach((f) =>
-        console.log(` - ${path.relative(process.cwd(), f)}`)
+      // Создаем список путей к мертвым файлам для включения в сообщение об ошибке
+      const relativeUnusedFiles = unusedFiles.map((f) => 
+        path.relative(process.cwd(), f)
       );
+
+      console.log('🔍 Найдены мёртвые (неиспользуемые) файлы:');
+      relativeUnusedFiles.forEach((f) => console.log(` - ${f}`));
+      
+      // Включаем список файлов в сообщение об ошибке
+      const filesList = relativeUnusedFiles.map(f => `\n - ${f}`).join('');
       throw new Error(
-        `В проекте обнаружены мёртвые файлы (${unusedFiles.length}) — их стоит удалить или заархивировать.`
+        `В проекте обнаружены мёртвые файлы (${unusedFiles.length}) — их стоит удалить или заархивировать.${filesList}`
       );
     }
   });
